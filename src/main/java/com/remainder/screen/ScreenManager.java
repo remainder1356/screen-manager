@@ -4,7 +4,9 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.graphics.glutils.HdpiUtils;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
@@ -29,15 +31,25 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
     protected float transitionTime;
     protected float transitionDuration;
     protected boolean autoDispose = false;
-
+    protected int currentWidth, currentHeight;
     protected FrameBuffer fbo;
+    protected boolean hasDepth;
 
     @Override
     public void create() {
+        currentWidth = Gdx.graphics.getWidth();
+        currentHeight = Gdx.graphics.getHeight();
         viewport = new ScalingViewport(Scaling.stretch, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(),
             new OrthographicCamera());
 
         instance = this;
+
+        if (fbo != null) {
+            fbo.dispose();
+        }
+        fbo = new FrameBuffer(Pixmap.Format.RGBA8888,
+                HdpiUtils.toBackBufferX(currentWidth),
+                HdpiUtils.toBackBufferY(currentHeight), hasDepth);
     }
 
     public void setScreen(Screen screen) {
@@ -144,8 +156,11 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
 
         if (isTransitioning) {
             if (screenTransition != null) {
-                if (curScreen == null || nextScreen == null) return;
-                screenTransition.render(curScreen.getFBO(fbo, delta), nextScreen.getFBO(fbo, delta), delta, curScreen.batch);
+                if (curScreen == null || nextScreen == null) {
+                    finishTransition();
+                    return;
+                }
+                screenTransition.render(curScreen.getFBO(fbo, delta), nextScreen.getFBO(fbo, delta), delta, nextScreen.batch);
             }
         } else {
             if (curScreen != null) {

@@ -18,7 +18,7 @@ public abstract class Screen implements com.badlogic.gdx.Screen {
     public Batch batch;
     /**
      * Pause is currently unused.
-     * Override {@link #update(float)} and {@link #render(float, float)} to implement custom pause behavior.
+     * Override {@link #update(float)} and {@link #render(float)} to implement custom pause behavior.
      */
     public boolean pause = false;
 
@@ -39,18 +39,14 @@ public abstract class Screen implements com.badlogic.gdx.Screen {
 
     @Override
     public void render(float delta) {
-        render(delta, 1f);
-    }
-
-    public void render(float delta, float alpha) {
-        stage.draw(alpha);
+        stage.draw();
 
         batch.begin();
-        renderOther(delta, alpha);
+        renderOther(delta);
         batch.end();
     }
 
-    public void renderOther(float delta, float alpha) {
+    public void renderOther(float delta) {
 
     }
 
@@ -61,7 +57,8 @@ public abstract class Screen implements com.badlogic.gdx.Screen {
 
     @Override
     public void dispose() {
-        stage.dispose();
+        if (lastScreen != null) lastScreen.dispose();
+        if (stage != null) stage.dispose();
     }
 
     @Override
