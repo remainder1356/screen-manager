@@ -56,6 +56,13 @@ publishing {
                     }
                 }
 
+                licenses {
+                    license {
+                        name = "MIT License"
+                        url = "https://opensource.org/licenses/MIT"
+                    }
+                }
+
                 scm {
                     connection = "scm:git:git://github.com/remainder1356/screen-manager.git"
                     developerConnection = "scm:git:ssh://github.com/remainder1356/screen-manager.git"

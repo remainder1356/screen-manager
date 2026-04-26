@@ -4,8 +4,6 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 
-import java.util.Objects;
-
 public abstract class ScreenTransition {
     protected float duration;
     protected float time;

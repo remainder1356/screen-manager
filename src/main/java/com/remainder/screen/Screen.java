@@ -1,18 +1,15 @@
 package com.remainder.screen;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.remainder.util.AutoLogger;
 import com.remainder.util.Stage;
 
 
-public abstract class Screen implements com.badlogic.gdx.Screen {
+public abstract class Screen implements com.badlogic.gdx.Screen, AutoLogger {
     protected Screen lastScreen;
     public Stage stage;
     public Batch batch;
@@ -74,10 +71,6 @@ public abstract class Screen implements com.badlogic.gdx.Screen {
     @Override
     public void hide() {
 
-    }
-
-    public String getTag() {
-        return getClass().getSimpleName();
     }
 
     public TextureRegion getFBO(FrameBuffer fbo, float delta) {

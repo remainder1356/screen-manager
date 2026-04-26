@@ -100,6 +100,14 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
         }
     }
 
+    public void toLastScreen(ScreenTransition transition, boolean debug) {
+        if (hasLastScreen()) {
+            setScreen(lastScreen, transition, debug);
+        }else {
+            error("The screen is not exists.");
+        }
+    }
+
     public Screen getCurScreen() {
         return curScreen;
     }
