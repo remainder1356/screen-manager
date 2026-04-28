@@ -16,6 +16,10 @@ import com.remainder.screen.transition.ScreenTransition;
 import com.remainder.util.AutoLogger;
 import com.remainder.util.Stage;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Objects;
+
 public abstract class ScreenManager implements ApplicationListener, AutoLogger {
     public static ScreenManager instance;
 
@@ -23,6 +27,7 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
 
     protected Viewport viewport;
 
+    protected LinkedList<Screen> lasts;
     protected Screen lastScreen;
     protected Screen curScreen;
     protected Screen nextScreen;
@@ -30,10 +35,12 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
     protected boolean isTransitioning;
     protected float transitionTime;
     protected float transitionDuration;
-    protected boolean autoDispose = false;
+    protected boolean autoDispose;
     protected int currentWidth, currentHeight;
     protected FrameBuffer fbo;
     protected boolean hasDepth;
+
+    private boolean toLast = false;
 
     @Override
     public void create() {
@@ -42,14 +49,16 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
         viewport = new ScalingViewport(Scaling.stretch, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(),
             new OrthographicCamera());
 
-        instance = this;
-
         if (fbo != null) {
             fbo.dispose();
         }
         fbo = new FrameBuffer(Pixmap.Format.RGBA8888,
                 HdpiUtils.toBackBufferX(currentWidth),
                 HdpiUtils.toBackBufferY(currentHeight), hasDepth);
+
+        lasts = new LinkedList<>();
+
+        instance = this;
     }
 
     public void setScreen(Screen screen) {
@@ -73,13 +82,12 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
         Gdx.input.setInputProcessor(screen.stage);
         screen.show();
 
-        // last(s1) - cur(s2) - next(-)     s1.last -> null     s2.last -> s1
-        // last(s1) - cur(s2) - next(s1)    s1.last -> s2       s2.last -> null
         nextScreen = screen;
-        if (curScreen != null && curScreen.lastScreen == nextScreen) {
-            curScreen.lastScreen = null;
+
+        if (!toLast && curScreen != null) {
+            lasts.add(curScreen);
         }
-        screen.lastScreen = curScreen;
+        toLast = false;
 
         if (transition != null) {
             screenTransition = transition;
@@ -93,16 +101,19 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
     }
 
     public void toLastScreen() {
-        if (hasLastScreen()) {
-            setScreen(lastScreen, new FadeScreenTransition());
-        }else {
-            error("The screen is not exists.");
-        }
+        toLastScreen(new FadeScreenTransition(), false);
     }
 
+    /**
+     * Here is the logic of the screen transition
+     * A -> B -> A -> C => B(cur) ==> toLast(C)
+     * A -> B -> A => B(cur) ==> toLast(C){Transition}
+     * A -> B -> A => C(cur)
+     */
     public void toLastScreen(ScreenTransition transition, boolean debug) {
         if (hasLastScreen()) {
-            setScreen(lastScreen, transition, debug);
+            toLast = true;
+            setScreen(Objects.requireNonNull(lasts.pollLast()), transition, debug);
         }else {
             error("The screen is not exists.");
         }
@@ -153,8 +164,9 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
             }
         }
 
+        lastScreen = lasts.peekLast();
         curScreen = nextScreen;
-        lastScreen = nextScreen.lastScreen;
+        curScreen.lastScreen = lastScreen;
 
         nextScreen = null;
     }

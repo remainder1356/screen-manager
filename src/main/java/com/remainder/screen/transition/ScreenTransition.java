@@ -45,7 +45,7 @@ public abstract class ScreenTransition {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "[" + duration + "s]";
+        return String.format("%s [ %.2f / %.2f s]",getClass().getSimpleName(), time, duration);
     }
 }
 

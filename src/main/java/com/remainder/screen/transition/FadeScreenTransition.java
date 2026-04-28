@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 
 public class FadeScreenTransition extends ScreenTransition {
+    public static float defaultDuration = 0.5f;
+
     public FadeScreenTransition() {
         this(defaultDuration);
     }
@@ -17,8 +19,6 @@ public class FadeScreenTransition extends ScreenTransition {
     public FadeScreenTransition(float duration, Interpolation interpolation) {
         super(duration, interpolation);
     }
-
-    public static float defaultDuration = 0.5f;
 
     @Override
     public void render(TextureRegion last, TextureRegion cur, float delta, Batch batch) {

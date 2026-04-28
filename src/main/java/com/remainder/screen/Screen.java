@@ -18,6 +18,7 @@ public abstract class Screen implements com.badlogic.gdx.Screen, AutoLogger {
      * Override {@link #update(float)} and {@link #render(float)} to implement custom pause behavior.
      */
     public boolean pause = false;
+    private boolean hasDisposed = false;
 
     @Override
     public void show() {
@@ -52,9 +53,23 @@ public abstract class Screen implements com.badlogic.gdx.Screen, AutoLogger {
         stage.getViewport().update(width, height);
     }
 
+    /**
+     * If you want to dispose resources, override {@link #disposeResources()}.
+     */
     @Override
-    public void dispose() {
-        if (lastScreen != null) lastScreen.dispose();
+    public final void dispose() {
+        if (hasDisposed) {
+            error("The screen is already disposed.");
+            return;
+        }
+
+        disposeResources();
+        hasDisposed = true;
+
+        if (lastScreen != null && !lastScreen.hasDisposed) lastScreen.dispose();
+    }
+
+    protected void disposeResources() {
         if (stage != null) stage.dispose();
     }
 

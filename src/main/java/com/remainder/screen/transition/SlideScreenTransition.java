@@ -8,6 +8,11 @@ import com.badlogic.gdx.math.Interpolation;
  * Supporting the screen slide in from left, right, top and bottom.
  */
 public class SlideScreenTransition extends ScreenTransition {
+    public static final int FROM_LEFT = 0;
+    public static final int FROM_RIGHT = 1;
+    public static final int FROM_TOP = 2;
+    public static final int FROM_BOTTOM = 3;
+
     public static float defaultDuration = 0.5f;
 
     public SlideScreenTransition(int slideDirection) {
@@ -29,10 +34,6 @@ public class SlideScreenTransition extends ScreenTransition {
     }
 
     private final int slideDirection;
-    public static final int FROM_LEFT = 0;
-    public static final int FROM_RIGHT = 1;
-    public static final int FROM_TOP = 2;
-    public static final int FROM_BOTTOM = 3;
 
     @Override
     public void render(TextureRegion last, TextureRegion cur, float delta, Batch batch) {
@@ -73,5 +74,10 @@ public class SlideScreenTransition extends ScreenTransition {
                 batch.draw(cur, -width + width * p, 0, width, height);
                 break;
         }
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + " - " + slideDirection;
     }
 }
