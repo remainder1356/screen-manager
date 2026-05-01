@@ -24,11 +24,12 @@ public abstract class ScreenTransition {
     }
 
     public float getProgress() {
-        return interpolation.apply(time/duration);
+        return progress;
     }
 
-    public void setProgress(float progress) {
-        this.progress = progress;
+    public void setTime(float time) {
+        this.time = time;
+        progress = interpolation.apply(time/duration);
     }
 
     public Interpolation getInterpolation() {

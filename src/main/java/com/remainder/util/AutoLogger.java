@@ -7,6 +7,10 @@ public interface AutoLogger {
         Gdx.app.log(getTag(), message);
     }
 
+    default void log(String message, Throwable throwable) {
+        Gdx.app.log(getTag(), message, throwable);
+    }
+
     default void error(String message) {
         Gdx.app.error(getTag(), message);
     }
@@ -17,6 +21,10 @@ public interface AutoLogger {
 
     default void debug(String message) {
         Gdx.app.debug(getTag(), message);
+    }
+
+    default void debug(String message, Throwable throwable) {
+        Gdx.app.debug(getTag(), message, throwable);
     }
 
     default String getTag() {

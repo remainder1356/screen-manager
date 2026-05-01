@@ -16,7 +16,6 @@ import com.remainder.screen.transition.ScreenTransition;
 import com.remainder.util.AutoLogger;
 import com.remainder.util.Stage;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Objects;
 
@@ -70,7 +69,7 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
     }
 
     public void setScreen(Screen screen, ScreenTransition transition, boolean debug) {
-        log("Setting: " + screen.getTag());
+        debug("Start setting screen: " + screen.getTag());
 
         if (isTransitioning) {
             finishTransition();
@@ -94,7 +93,7 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
             isTransitioning = true;
             transitionTime = 0;
             transitionDuration = transition.getDuration();
-            log("Processing Transition: " + transition);
+            debug("Start processing transition.");
         } else {
             nextScreen();
         }
@@ -139,7 +138,8 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
 
     private void updateTransition(float delta) {
         transitionTime += delta;
-        screenTransition.setProgress(transitionTime);
+        screenTransition.setTime(transitionTime);
+        debug("Processing transition: " + screenTransition);
 
         if (transitionTime >= transitionDuration) {
             finishTransition();
@@ -152,7 +152,7 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
         transitionDuration = 0;
         screenTransition = null;
         isTransitioning = false;
-        log("Finish transition.");
+        debug("Finish transition.");
     }
 
     private void nextScreen() {
