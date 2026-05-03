@@ -18,6 +18,7 @@ import com.remainder.util.Stage;
 
 import java.util.LinkedList;
 import java.util.Objects;
+import java.util.Stack;
 
 public abstract class ScreenManager implements ApplicationListener, AutoLogger {
     public static ScreenManager instance;
@@ -26,7 +27,7 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
 
     protected Viewport viewport;
 
-    protected LinkedList<Screen> lasts;
+    protected Stack<Screen> lasts;
     protected Screen lastScreen;
     protected Screen curScreen;
     protected Screen nextScreen;
@@ -55,7 +56,7 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
                 HdpiUtils.toBackBufferX(currentWidth),
                 HdpiUtils.toBackBufferY(currentHeight), hasDepth);
 
-        lasts = new LinkedList<>();
+        lasts = new Stack<>();
 
         instance = this;
     }
@@ -84,7 +85,7 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
         nextScreen = screen;
 
         if (!toLast && curScreen != null) {
-            lasts.add(curScreen);
+            lasts.push(curScreen);
         }
         toLast = false;
 
@@ -112,7 +113,7 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
     public void toLastScreen(ScreenTransition transition, boolean debug) {
         if (hasLastScreen()) {
             toLast = true;
-            setScreen(Objects.requireNonNull(lasts.pollLast()), transition, debug);
+            setScreen(Objects.requireNonNull(lasts.pop()), transition, debug);
         }else {
             error("The screen is not exists.");
         }
@@ -164,7 +165,7 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
             }
         }
 
-        lastScreen = lasts.peekLast();
+        lastScreen = lasts.peek();
         curScreen = nextScreen;
         curScreen.lastScreen = lastScreen;
 
@@ -172,7 +173,7 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
     }
 
     public void render(float delta) {
-        ScreenUtils.clear(clearColor);
+        ScreenUtils.clear(clearColor, true);
 
         if (isTransitioning) {
             if (screenTransition != null) {

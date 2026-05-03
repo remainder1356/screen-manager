@@ -7,7 +7,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 
 /**
- * Lower priorities are processed first.
+ * Lower priorities will be processed first. Higher priorities will be drawn at higher layers.
  * Some methods are deprecated as they are no longer required.
  * Note that {@link #addActorAt} is a special case: its int parameter is now used as the priority.
  */

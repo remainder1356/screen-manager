@@ -69,6 +69,6 @@ public class Stage extends com.badlogic.gdx.scenes.scene2d.Stage{
     }
 
     public void addUIActor(Actor actor) {
-        addActor(actor, -0x40000000);
+        addActor(actor, 0x40000000);
     }
 }

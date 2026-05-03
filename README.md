@@ -27,10 +27,11 @@ Screen Manager is a lightweight and flexible screen management library for libGD
 ```kotlin
 repositories {
     mavenCentral()
+    maven { url = uri("https://jitpack.io") }
 }
 
 dependencies {
-    implementation("io.github.remainder1356:screen-manager:1.0.0")
+    implementation("com.github.remainder1356:screen-manager:1.0.3")
 }
 ```
 
@@ -38,9 +39,9 @@ dependencies {
 
 ```xml
 <dependency>
-    <groupId>io.github.remainder1356</groupId>
+    <groupId>com.github.remainder1356</groupId>
     <artifactId>screen-manager</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.3</version>
 </dependency>
 ```
 
@@ -180,6 +181,43 @@ Enable debug rendering for a specific screen:
 setScreen(new MyScreen(), new FadeScreenTransition(), true); // true enables debug mode
 ```
 
+### Enhanced Stage Implementation
+
+The library includes an enhanced `Stage` class that extends libGDX's Scene2D Stage with additional features:
+
+#### Priority-Based Actor Management
+
+Actors can be added with specific priorities to control rendering order:
+
+```java
+// Create a stage
+Stage stage = new Stage();
+
+// Add actor with custom priority (lower priorities rendered first)
+stage.addActor(myActor, 10);
+
+// Add UI actor with high priority (rendered at higher layer)
+stage.addUIActor(uiActor);
+```
+
+#### Alpha Transparency Support
+
+Draw the entire stage with alpha transparency:
+
+```java
+// Draw stage with 50% opacity
+stage.draw(0.5f);
+
+// Normal draw (full opacity)
+stage.draw();
+```
+
+#### Priority Levels
+
+- Lower priority values are rendered first (background layer)
+- Higher priority values are rendered last (foreground layer)
+- UI actors use priority `0x40000000` by default to ensure they're rendered at a higher layer
+
 ### Project Structure
 
 ```
@@ -242,10 +280,11 @@ Screen Manager 是一个专为 libGDX 应用设计的轻量级、灵活的屏幕
 ```kotlin
 repositories {
     mavenCentral()
+    maven { url = uri("https://jitpack.io") }
 }
 
 dependencies {
-    implementation("io.github.remainder1356:screen-manager:1.0.0")
+    implementation("com.github.remainder1356:screen-manager:1.0.3")
 }
 ```
 
@@ -253,9 +292,9 @@ dependencies {
 
 ```xml
 <dependency>
-    <groupId>io.github.remainder1356</groupId>
+    <groupId>com.github.remainder1356</groupId>
     <artifactId>screen-manager</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.3</version>
 </dependency>
 ```
 
@@ -394,6 +433,43 @@ Screen last = getLastScreen();
 ```java
 setScreen(new MyScreen(), new FadeScreenTransition(), true); // true 启用调试模式
 ```
+
+### 增强的 Stage 实现
+
+库中包含一个增强的 `Stage` 类，扩展了 libGDX 的 Scene2D Stage 并添加了额外功能：
+
+#### 基于优先级的 Actor 管理
+
+可以按特定优先级添加 Actor 来控制渲染顺序：
+
+```java
+// 创建舞台
+Stage stage = new Stage();
+
+// 添加具有自定义优先级的 actor（较低优先级先渲染）
+stage.addActor(myActor, 10);
+
+// 添加 UI actor，具有高优先级（在较高层渲染）
+stage.addUIActor(uiActor);
+```
+
+#### Alpha 透明度支持
+
+以透明度绘制整个舞台：
+
+```java
+// 以 50% 不透明度绘制舞台
+stage.draw(0.5f);
+
+// 正常绘制（完全不透明）
+stage.draw();
+```
+
+#### 优先级级别
+
+- 较低的优先级值先渲染（背景层）
+- 较高的优先级值最后渲染（前景层）
+- UI actor 默认使用优先级 `0x40000000` 以确保在较高层渲染
 
 ### 项目结构
 
