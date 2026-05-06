@@ -24,6 +24,8 @@ public class FadeScreenTransition extends ScreenTransition {
     public void render(TextureRegion last, TextureRegion cur, float delta, Batch batch) {
         super.render(last, cur, delta, batch);
 
+        batch.begin();
+
         // Blends the two screens
         Color c = batch.getColor();
 
@@ -33,5 +35,7 @@ public class FadeScreenTransition extends ScreenTransition {
         batch.setColor(c.r, c.g, c.b, 1-progress);
         batch.draw(cur, 0, 0, cur.getRegionWidth(), cur.getRegionHeight());
         batch.setColor(c.r, c.g, c.b, 1);
+
+        batch.end();
     }
 }

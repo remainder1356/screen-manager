@@ -39,6 +39,8 @@ public class SlideScreenTransition extends ScreenTransition {
     public void render(TextureRegion last, TextureRegion cur, float delta, Batch batch) {
         super.render(last, cur, delta, batch);
 
+        batch.begin();
+
         float p = progress;
         int width = cur.getRegionWidth();
         int height = cur.getRegionHeight();
@@ -74,6 +76,8 @@ public class SlideScreenTransition extends ScreenTransition {
                 batch.draw(cur, -width + width * p, 0, width, height);
                 break;
         }
+
+        batch.end();
     }
 
     @Override

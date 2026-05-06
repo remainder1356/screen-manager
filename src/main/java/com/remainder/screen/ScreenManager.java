@@ -164,7 +164,7 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
             }
         }
 
-        lastScreen = lasts.peek();
+        lastScreen = lasts.isEmpty() ? null : lasts.peek();
         curScreen = nextScreen;
         curScreen.lastScreen = lastScreen;
 
