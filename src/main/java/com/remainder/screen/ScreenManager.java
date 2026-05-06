@@ -16,7 +16,6 @@ import com.remainder.screen.transition.ScreenTransition;
 import com.remainder.util.AutoLogger;
 import com.remainder.util.Stage;
 
-import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Stack;
 

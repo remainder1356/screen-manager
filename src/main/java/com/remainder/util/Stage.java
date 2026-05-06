@@ -64,6 +64,11 @@ public class Stage extends com.badlogic.gdx.scenes.scene2d.Stage{
         super.setViewport(viewport);
     }
 
+    @Override
+    public void addActor(Actor actor) {
+        addActor(actor, 0);
+    }
+
     public void addActor(Actor actor, int priority) {
         ((PriorityGroup)getRoot()).addActor(actor, priority);
     }
