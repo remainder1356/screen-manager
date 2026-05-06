@@ -8,8 +8,7 @@ import java.util.HashMap;
 
 /**
  * Lower priorities will be processed first. Higher priorities will be drawn at higher layers.
- * Some methods are deprecated as they are no longer required.
- * Note that {@link #addActorAt} is a special case: its int parameter is now used as the priority.
+ * Method swapActor(int first, int second) is deprecated as it is no longer required.
  */
 public class PriorityGroup extends Group {
     public PriorityGroup() {
@@ -31,26 +30,42 @@ public class PriorityGroup extends Group {
         return false;
     }
 
+    /**
+     * Swap two actors and their priorities.
+     * @return {@link Group#swapActor(int, int)}
+     */
     @Override
-    @Deprecated
     public boolean swapActor(Actor first, Actor second) {
-        return false;
+        boolean r = super.swapActor(first, second);
+
+        if (r) {
+            priorities.put(first, priorities.get(second));
+            priorities.put(second, priorities.get(first));
+        }
+
+        return r;
     }
 
+    /**
+     * Add actor to the group with a priority one more than actorAfter.
+     */
     @Override
-    @Deprecated
     public void addActorAfter(Actor actorAfter, Actor actor) {
-        addActor(actor);
+        addActor(actor, priorities.getOrDefault(actorAfter, 0)+1);
     }
 
+    /**
+     * Add actor to the group with a priority one less than actorBefore.
+     */
     @Override
-    @Deprecated
     public void addActorBefore(Actor actorBefore, Actor actor) {
-        addActor(actor);
+        addActor(actor, priorities.getOrDefault(actorBefore, 0)-1);
     }
 
+    /**
+     * Add an actor to the group.
+     */
     @Override
-    @Deprecated
     public void addActorAt(int priority, Actor actor) {
         addActor(actor, priority);
     }
