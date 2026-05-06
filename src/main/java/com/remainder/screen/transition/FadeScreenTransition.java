@@ -29,10 +29,10 @@ public class FadeScreenTransition extends ScreenTransition {
         // Blends the two screens
         Color c = batch.getColor();
 
-        batch.setColor(c.r, c.g, c.b, progress);
+        batch.setColor(c.r, c.g, c.b, 1-progress);
         batch.draw(last, 0, 0, last.getRegionWidth(), last.getRegionHeight());
 
-        batch.setColor(c.r, c.g, c.b, 1-progress);
+        batch.setColor(c.r, c.g, c.b, progress);
         batch.draw(cur, 0, 0, cur.getRegionWidth(), cur.getRegionHeight());
         batch.setColor(c.r, c.g, c.b, 1);
 

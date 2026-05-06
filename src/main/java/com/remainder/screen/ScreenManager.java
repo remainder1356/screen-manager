@@ -36,7 +36,7 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
     protected float transitionDuration;
     protected boolean autoDispose;
     protected int currentWidth, currentHeight;
-    protected FrameBuffer fbo;
+    protected FrameBuffer lastFBO, curFBO;
     protected boolean hasDepth;
 
     private boolean toLast = false;
@@ -48,10 +48,16 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
         viewport = new ScalingViewport(Scaling.stretch, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(),
             new OrthographicCamera());
 
-        if (fbo != null) {
-            fbo.dispose();
+        if (lastFBO != null) {
+            lastFBO.dispose();
         }
-        fbo = new FrameBuffer(Pixmap.Format.RGBA8888,
+        lastFBO = new FrameBuffer(Pixmap.Format.RGBA8888,
+                HdpiUtils.toBackBufferX(currentWidth),
+                HdpiUtils.toBackBufferY(currentHeight), hasDepth);
+        if (curFBO != null) {
+            curFBO.dispose();
+        }
+        curFBO = new FrameBuffer(Pixmap.Format.RGBA8888,
                 HdpiUtils.toBackBufferX(currentWidth),
                 HdpiUtils.toBackBufferY(currentHeight), hasDepth);
 
@@ -87,6 +93,7 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
             lasts.push(curScreen);
         }
         toLast = false;
+        lastScreen = lasts.isEmpty() ? null : lasts.peek();
 
         if (transition != null) {
             screenTransition = transition;
@@ -164,7 +171,6 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
             }
         }
 
-        lastScreen = lasts.isEmpty() ? null : lasts.peek();
         curScreen = nextScreen;
         curScreen.lastScreen = lastScreen;
 
@@ -180,7 +186,7 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
                     finishTransition();
                     return;
                 }
-                screenTransition.render(curScreen.getFBO(fbo, delta), nextScreen.getFBO(fbo, delta), delta, nextScreen.batch);
+                screenTransition.render(curScreen.getFBO(lastFBO, delta), nextScreen.getFBO(curFBO, delta), delta, nextScreen.batch);
             }
         } else {
             if (curScreen != null) {
