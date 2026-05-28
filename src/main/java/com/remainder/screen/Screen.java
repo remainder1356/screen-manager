@@ -1,9 +1,13 @@
 package com.remainder.screen;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.remainder.util.AutoLogger;
 import com.remainder.util.Stage;
@@ -19,16 +23,26 @@ public abstract class Screen implements com.badlogic.gdx.Screen, AutoLogger {
      */
     public boolean pause = false;
     private boolean hasDisposed = false;
+    private boolean enableEscReturn = false;
+    private final InputListener escReturnRunnable = new InputListener() {
+        @Override
+        public boolean keyUp(InputEvent event, int keycode) {
+            if (keycode == Input.Keys.ESCAPE) {
+                Gdx.app.postRunnable(() -> {
+                    if (ScreenManager.instance.hasLastScreen()) {
+                        ScreenManager.instance.toLastScreen();
+                    } else {
+                        Gdx.app.exit();
+                    }
+                });
+            }
+            return false;
+        }
+    };
 
     @Override
     public void show() {
-//        stage.addListener(new InputListener() {
-//            @Override
-//            public boolean keyUp(InputEvent event, int keycode) {
-//                if (keycode == Input.Keys.ESCAPE) Gdx.app.postRunnable(() -> ScreenManager.instance.toLastScreen());
-//                return false;
-//            }
-//        });
+        checkEscReturn();
     }
 
     public void update(float delta) {
@@ -44,7 +58,7 @@ public abstract class Screen implements com.badlogic.gdx.Screen, AutoLogger {
         batch.end();
     }
 
-    public void renderOther(float delta) {
+    public void renderOther(float delta){
 
     }
 
@@ -88,7 +102,7 @@ public abstract class Screen implements com.badlogic.gdx.Screen, AutoLogger {
 
     }
 
-    public TextureRegion getFBO(FrameBuffer fbo, float delta) {
+    protected TextureRegion getFBO(FrameBuffer fbo, float delta) {
         fbo.begin();
         ScreenUtils.clear(ScreenManager.instance.clearColor, true);
         render(delta);
@@ -101,5 +115,21 @@ public abstract class Screen implements com.badlogic.gdx.Screen, AutoLogger {
         textureRegion.flip(false, true);
 
         return textureRegion;
+    }
+
+    public boolean isEnableEscReturn() {
+        return enableEscReturn;
+    }
+
+    public void setEnableEscReturn(boolean enableEscReturn) {
+        this.enableEscReturn = enableEscReturn;
+        checkEscReturn();
+    }
+
+    private void checkEscReturn() {
+        if (stage == null) return;
+
+        if (enableEscReturn) stage.addListener(escReturnRunnable);
+        else stage.removeListener(escReturnRunnable);
     }
 }

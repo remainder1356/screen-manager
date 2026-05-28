@@ -2,6 +2,7 @@ package com.remainder.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 public class ReflectUtil {
     public static Field getField(Class<?> clazz, String fieldName) {
@@ -147,12 +148,18 @@ public class ReflectUtil {
         }
     }
 
+    public static Object getAndInvoke(Class<?> clazz, Object object, String methodName, Parameter... params) {
+        return getAndInvoke(clazz, object, methodName,
+                (Class<?>[]) Arrays.stream(params).map(Parameter::clazz).toArray(),
+                Arrays.stream(params).map(Parameter::object).toArray());
+    }
+
     /**
      * The method should not take any arguments.
      * @return The method's return value, or {@code null} if the method does not exist.
      */
     public static Object getAndInvoke(Class<?> clazz, Object object, String methodName) {
-        return getAndInvoke(clazz, object, methodName, null);
+        return getAndInvoke(clazz, object, methodName, (Parameter[]) null);
     }
 
     public static void setField(Class<?> clazz, Object object, String fieldName, Object value) {
@@ -244,4 +251,6 @@ public class ReflectUtil {
             e.fillInStackTrace();
         }
     }
+
+    public record Parameter(Class<?> clazz, Object object) { }
 }

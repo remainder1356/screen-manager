@@ -7,9 +7,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.HdpiUtils;
-import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.ScalingViewport;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.remainder.screen.transition.FadeScreenTransition;
 import com.remainder.screen.transition.ScreenTransition;
@@ -45,8 +44,7 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
     public void create() {
         currentWidth = Gdx.graphics.getWidth();
         currentHeight = Gdx.graphics.getHeight();
-        viewport = new ScalingViewport(Scaling.stretch, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(),
-            new OrthographicCamera());
+        viewport = new ExtendViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new OrthographicCamera());
 
         if (lastFBO != null) {
             lastFBO.dispose();
@@ -193,12 +191,6 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
                 curScreen.render(delta);
             }
         }
-
-//        if (curScreen != null) {
-//            curScreen.batch.begin();
-//            displayList.draw(curScreen.batch, 1f);
-//            curScreen.batch.end();
-//        }
     }
 
     @Override
