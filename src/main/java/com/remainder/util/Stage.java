@@ -22,13 +22,12 @@ public class Stage extends com.badlogic.gdx.scenes.scene2d.Stage{
     }
 
     @Override
-    public Actor hit(float stageX, float stageY, boolean touchable) {
-        return super.hit(stageX, stageY, touchable);
-    }
-
-    @Override
     public void draw() {
         draw(1);
+    }
+
+    public PriorityGroup getPriorityGroup() {
+        return (PriorityGroup) getRoot();
     }
 
     /**

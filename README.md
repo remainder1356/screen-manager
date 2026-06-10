@@ -241,22 +241,21 @@ hotkeyListener.registerHotkey(Input.Keys.ESCAPE, () -> {
 
 // Register space key for special action
 hotkeyListener.registerHotkey(Input.Keys.SPACE, () -> {
-    System.out.println("Space key pressed - Perform special action");
+    System.out.println("Space key pressed");
 });
 ```
 
 #### Registering Key Combinations
 
 ```java
-// Register Ctrl+S for save operation
+// Register Ctrl+S
 hotkeyListener.registerComboKey(ComboKey.ctrl(Input.Keys.S), () -> {
-    System.out.println("Ctrl+S pressed - Save operation");
+    System.out.println("Ctrl+S pressed");
 });
 
-// Register Ctrl+Q to exit application
+// Register Ctrl+Q
 hotkeyListener.registerComboKey(ComboKey.ctrl(Input.Keys.Q), () -> {
-    System.out.println("Ctrl+Q pressed - Exit application");
-    Gdx.app.exit();
+    System.out.println("Ctrl+Q pressed");
 });
 
 // Other available combination helpers:
@@ -276,11 +275,12 @@ public class MyScreen extends Screen {
         
         // Register hotkeys
         hotkeyListener.registerHotkey(Input.Keys.ESCAPE, () -> {
-            ScreenManager.instance.toLastScreen();
+            if (ScreenManager.instance.hasLastScreen()) {
+                ScreenManager.instance.toLastScreen();
+            } else {
+                Gdx.app.exit();
+            }
         });
-        
-        // Add hotkey listener to the stage
-        stage.addListener(hotkeyListener);
     }
 }
 ```
@@ -294,9 +294,9 @@ public class MyScreen extends Screen implements AutoLogger {
     @Override
     public void show() {
         super.show();
-        log("MyScreen is now showing");
-        debug("Debug message for MyScreen");
-        error("Error occurred in MyScreen");
+        log("Log message");
+        debug("Debug message");
+        error("Error occurred");
     }
 }
 ```
@@ -598,24 +598,23 @@ hotkeyListener.registerHotkey(Input.Keys.ESCAPE, () -> {
     }
 });
 
-// 注册空格键执行特殊操作
+// 注册空格键
 hotkeyListener.registerHotkey(Input.Keys.SPACE, () -> {
-    System.out.println("空格键被按下 - 执行特殊操作");
+    System.out.println("空格键被按下");
 });
 ```
 
 #### 注册组合键
 
 ```java
-// 注册 Ctrl+S 保存操作
+// 注册 Ctrl+S
 hotkeyListener.registerComboKey(ComboKey.ctrl(Input.Keys.S), () -> {
-    System.out.println("Ctrl+S 被按下 - 保存操作");
+    System.out.println("Ctrl+S 被按下");
 });
 
-// 注册 Ctrl+Q 退出应用
+// 注册 Ctrl+Q
 hotkeyListener.registerComboKey(ComboKey.ctrl(Input.Keys.Q), () -> {
-    System.out.println("Ctrl+Q 被按下 - 退出应用");
-    Gdx.app.exit();
+    System.out.println("Ctrl+Q 被按下");
 });
 
 // 其他可用的组合键辅助方法：
@@ -635,11 +634,12 @@ public class MyScreen extends Screen {
         
         // 注册热键
         hotkeyListener.registerHotkey(Input.Keys.ESCAPE, () -> {
-            ScreenManager.instance.toLastScreen();
+            if (ScreenManager.instance.hasLastScreen()) {
+                ScreenManager.instance.toLastScreen();
+            } else {
+                Gdx.app.exit();
+            }
         });
-        
-        // 将热键监听器添加到舞台
-        stage.addListener(hotkeyListener);
     }
 }
 ```
@@ -653,9 +653,9 @@ public class MyScreen extends Screen implements AutoLogger {
     @Override
     public void show() {
         super.show();
-        log("MyScreen 现在显示");
-        debug("MyScreen 的调试消息");
-        error("MyScreen 发生错误");
+        log("日志消息");
+        debug("调试消息");
+        error("发生错误");
     }
 }
 ```
