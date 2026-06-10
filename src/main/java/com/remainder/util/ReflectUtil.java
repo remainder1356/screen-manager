@@ -28,6 +28,20 @@ public class ReflectUtil {
     }
 
     /**
+     * Equals to {@code getField(object.getClass(), object, fieldName)}.
+     */
+    public static Object getField(Object object, String fieldName) {
+        try {
+            Field field = object.getClass().getDeclaredField(fieldName);
+            field.setAccessible(true);
+            return field.get(object);
+        } catch (Exception e) {
+            e.fillInStackTrace();
+            return null;
+        }
+    }
+
+    /**
      * @return false if the field is not found
      */
     public static boolean getBool(Class<?> clazz, Object object, String fieldName) {

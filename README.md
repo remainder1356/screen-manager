@@ -1,5 +1,7 @@
 # Screen Manager
 
+[![](https://jitpack.io/v/remainder1356/screen-manager.svg)](https://jitpack.io/#remainder1356/screen-manager)
+
 [English](#english) | [中文](#中文)
 
 ---
@@ -8,7 +10,7 @@
 
 ### Overview
 
-Screen Manager is a lightweight and flexible screen management library for libGDX applications. It provides an elegant solution for managing multiple screens with smooth transition effects, making it easy to build complex multiscreen applications.
+Screen Manager is a lightweight and flexible screen management library for libGDX applications. It provides an elegant solution for managing multiple screens with smooth transition effects, making it easy to build complex multiscreen applications. The library includes advanced features such as priority-based rendering, hotkey management, and automatic logging capabilities.
 
 ### Features
 
@@ -19,6 +21,9 @@ Screen Manager is a lightweight and flexible screen management library for libGD
 - **Auto-dispose Support**: Optional automatic disposal of screens when they're no longer needed
 - **FrameBuffer Rendering**: Efficient rendering using FrameBuffers for smooth transitions
 - **Debug Mode**: Built-in debug support for UI development
+- **Enhanced Stage**: Extended Stage implementation with priority-based actor management
+- **Hotkey Management**: Comprehensive hotkey and combination key handling
+- **Auto Logging**: Built-in logging utility for easier debugging
 
 ### Installation
 
@@ -31,7 +36,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.remainder1356:screen-manager:1.0.3")
+    implementation("com.github.remainder1356:screen-manager:1.0.8")
 }
 ```
 
@@ -41,7 +46,7 @@ dependencies {
 <dependency>
     <groupId>com.github.remainder1356</groupId>
     <artifactId>screen-manager</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.8</version>
 </dependency>
 ```
 
@@ -218,6 +223,102 @@ stage.draw();
 - Higher priority values are rendered last (foreground layer)
 - UI actors use priority `0x40000000` by default to ensure they're rendered at a higher layer
 
+### Hotkey Management
+
+The library provides comprehensive hotkey management with support for both single keys and key combinations:
+
+#### Registering Single Key Hotkeys
+
+```java
+// Register ESC key to return to previous screen
+hotkeyListener.registerHotkey(Input.Keys.ESCAPE, () -> {
+    if (ScreenManager.instance.hasLastScreen()) {
+        ScreenManager.instance.toLastScreen();
+    } else {
+        Gdx.app.exit();
+    }
+});
+
+// Register space key for special action
+hotkeyListener.registerHotkey(Input.Keys.SPACE, () -> {
+    System.out.println("Space key pressed - Perform special action");
+});
+```
+
+#### Registering Key Combinations
+
+```java
+// Register Ctrl+S for save operation
+hotkeyListener.registerComboKey(ComboKey.ctrl(Input.Keys.S), () -> {
+    System.out.println("Ctrl+S pressed - Save operation");
+});
+
+// Register Ctrl+Q to exit application
+hotkeyListener.registerComboKey(ComboKey.ctrl(Input.Keys.Q), () -> {
+    System.out.println("Ctrl+Q pressed - Exit application");
+    Gdx.app.exit();
+});
+
+// Other available combination helpers:
+ComboKey.shift(Input.Keys.F1);      // Shift+F1
+ComboKey.alt(Input.Keys.F4);        // Alt+F4
+ComboKey.ctrlAlt(Input.Keys.DELETE); // Ctrl+Alt+Delete
+ComboKey.all(Input.Keys.N);         // Ctrl+Alt+Shift+N
+```
+
+#### Using Hotkey Listener in Screen
+
+```java
+public class MyScreen extends Screen {
+    @Override
+    public void show() {
+        super.show();
+        
+        // Register hotkeys
+        hotkeyListener.registerHotkey(Input.Keys.ESCAPE, () -> {
+            ScreenManager.instance.toLastScreen();
+        });
+        
+        // Add hotkey listener to the stage
+        stage.addListener(hotkeyListener);
+    }
+}
+```
+
+### Auto Logger Utility
+
+The `AutoLogger` interface provides convenient logging methods:
+
+```java
+public class MyScreen extends Screen implements AutoLogger {
+    @Override
+    public void show() {
+        super.show();
+        log("MyScreen is now showing");
+        debug("Debug message for MyScreen");
+        error("Error occurred in MyScreen");
+    }
+}
+```
+
+### Priority Group Actor Management
+
+The `PriorityGroup` allows fine-grained control over actor rendering order:
+
+```java
+// Add actor with priority
+((PriorityGroup)stage.getRoot()).addActor(actor, priorityValue);
+
+// Add actor after another actor
+stage.addActorAfter(actorBefore, newActor);
+
+// Add actor before another actor
+stage.addActorBefore(actorAfter, newActor);
+
+// Swap actor positions
+stage.swapActor(firstActor, secondActor);
+```
+
 ### Project Structure
 
 ```
@@ -233,13 +334,20 @@ com.remainder.util
 ├── AutoLogger.java                # Automatic logging utility
 ├── PriorityGroup.java             # Priority-based actor grouping
 ├── ReflectUtil.java               # Reflection utilities
-└── Stage.java                     # Enhanced stage implementation
+├── Stage.java                     # Enhanced stage implementation
+└── font/
+    ├── DefaultFont.java           # Default font utility
+    └── Font.java                  # Font interface
+
+com.remainder.input
+├── HotkeyListener.java            # Hotkey management
+└── ComboKey.java                  # Key combination utilities
 ```
 
 ### Dependencies
 
 - **libGDX**: 1.13.5
-- Java 8 or higher
+- Java 21 or higher
 
 ### License
 
@@ -261,7 +369,7 @@ Contributions are welcome! Please feel free to submit issues and pull requests.
 
 ### 项目简介
 
-Screen Manager 是一个专为 libGDX 应用设计的轻量级、灵活的屏幕管理库。它提供了优雅的解决方案来管理多个屏幕，支持流畅的过渡效果，让构建复杂的多屏应用变得简单轻松。
+Screen Manager 是一个专为 libGDX 应用设计的轻量级、灵活的屏幕管理库。它提供了优雅的解决方案来管理多个屏幕，支持流畅的过渡效果，让构建复杂的多屏应用变得简单轻松。该库还包含了基于优先级的渲染、热键管理和自动日志等高级功能。
 
 ### 主要特性
 
@@ -272,6 +380,9 @@ Screen Manager 是一个专为 libGDX 应用设计的轻量级、灵活的屏幕
 - **自动释放支持**: 可选的屏幕自动释放功能
 - **帧缓冲渲染**: 使用 FrameBuffer 实现高效的过渡渲染
 - **调试模式**: 内置 UI 开发调试支持
+- **增强的 Stage**: 扩展的 Stage 实现，支持基于优先级的 Actor 管理
+- **热键管理**: 全面的单键和组合键处理
+- **自动日志**: 内置日志工具，便于调试
 
 ### 安装
 
@@ -284,7 +395,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.remainder1356:screen-manager:1.0.3")
+    implementation("com.github.remainder1356:screen-manager:1.0.8")
 }
 ```
 
@@ -294,7 +405,7 @@ dependencies {
 <dependency>
     <groupId>com.github.remainder1356</groupId>
     <artifactId>screen-manager</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.8</version>
 </dependency>
 ```
 
@@ -471,6 +582,102 @@ stage.draw();
 - 较高的优先级值最后渲染（前景层）
 - UI actor 默认使用优先级 `0x40000000` 以确保在较高层渲染
 
+### 热键管理
+
+该库提供了全面的热键管理功能，支持单键和组合键：
+
+#### 注册单键热键
+
+```java
+// 注册 ESC 键返回上一屏
+hotkeyListener.registerHotkey(Input.Keys.ESCAPE, () -> {
+    if (ScreenManager.instance.hasLastScreen()) {
+        ScreenManager.instance.toLastScreen();
+    } else {
+        Gdx.app.exit();
+    }
+});
+
+// 注册空格键执行特殊操作
+hotkeyListener.registerHotkey(Input.Keys.SPACE, () -> {
+    System.out.println("空格键被按下 - 执行特殊操作");
+});
+```
+
+#### 注册组合键
+
+```java
+// 注册 Ctrl+S 保存操作
+hotkeyListener.registerComboKey(ComboKey.ctrl(Input.Keys.S), () -> {
+    System.out.println("Ctrl+S 被按下 - 保存操作");
+});
+
+// 注册 Ctrl+Q 退出应用
+hotkeyListener.registerComboKey(ComboKey.ctrl(Input.Keys.Q), () -> {
+    System.out.println("Ctrl+Q 被按下 - 退出应用");
+    Gdx.app.exit();
+});
+
+// 其他可用的组合键辅助方法：
+ComboKey.shift(Input.Keys.F1);      // Shift+F1
+ComboKey.alt(Input.Keys.F4);        // Alt+F4
+ComboKey.ctrlAlt(Input.Keys.DELETE); // Ctrl+Alt+Delete
+ComboKey.all(Input.Keys.N);         // Ctrl+Alt+Shift+N
+```
+
+#### 在屏幕中使用热键监听器
+
+```java
+public class MyScreen extends Screen {
+    @Override
+    public void show() {
+        super.show();
+        
+        // 注册热键
+        hotkeyListener.registerHotkey(Input.Keys.ESCAPE, () -> {
+            ScreenManager.instance.toLastScreen();
+        });
+        
+        // 将热键监听器添加到舞台
+        stage.addListener(hotkeyListener);
+    }
+}
+```
+
+### 自动日志工具
+
+`AutoLogger` 接口提供了便捷的日志方法：
+
+```java
+public class MyScreen extends Screen implements AutoLogger {
+    @Override
+    public void show() {
+        super.show();
+        log("MyScreen 现在显示");
+        debug("MyScreen 的调试消息");
+        error("MyScreen 发生错误");
+    }
+}
+```
+
+### 优先级组 Actor 管理
+
+`PriorityGroup` 允许对 Actor 渲染顺序进行细粒度控制：
+
+```java
+// 按优先级添加 Actor
+((PriorityGroup)stage.getRoot()).addActor(actor, priorityValue);
+
+// 在另一个 Actor 之后添加
+stage.addActorAfter(actorBefore, newActor);
+
+// 在另一个 Actor 之前添加
+stage.addActorBefore(actorAfter, newActor);
+
+// 交换 Actor 位置
+stage.swapActor(firstActor, secondActor);
+```
+
 ### 项目结构
 
 ```
@@ -486,13 +693,20 @@ com.remainder.util
 ├── AutoLogger.java                # 自动日志工具
 ├── PriorityGroup.java             # 基于优先级的 Actor 分组
 ├── ReflectUtil.java               # 反射工具
-└── Stage.java                     # 增强的 Stage 实现
+├── Stage.java                     # 增强的 Stage 实现
+└── font/
+    ├── DefaultFont.java           # 默认字体工具
+    └── Font.java                  # 字体接口
+
+com.remainder.input
+├── HotkeyListener.java            # 热键管理
+└── ComboKey.java                  # 组合键工具
 ```
 
 ### 依赖项
 
 - **libGDX**: 1.13.5
-- Java 8 或更高版本
+- Java 21 或更高版本
 
 ### 开源协议
 

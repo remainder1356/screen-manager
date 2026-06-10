@@ -10,9 +10,15 @@ repositories {
 }
 
 dependencies {
-    implementation("com.badlogicgames.gdx:gdx:${project.property("gdxVersion")}")
-    implementation("com.badlogicgames.gdx:gdx-backend-lwjgl3:${project.property("gdxVersion")}")
-    implementation("com.badlogicgames.gdx:gdx-platform:${project.property("gdxVersion")}:natives-desktop")
+    var gdxVer = project.property("gdxVersion")
+
+    implementation("com.badlogicgames.gdx:gdx:${gdxVer}")
+    implementation("com.badlogicgames.gdx:gdx-freetype:${gdxVer}")
+
+    testImplementation("com.kotcrab.vis:vis-ui:${project.property("visUiVersion")}")
+    testImplementation("com.badlogicgames.gdx:gdx-backend-lwjgl3:${gdxVer}")
+    testImplementation("com.badlogicgames.gdx:gdx-platform:${gdxVer}:natives-desktop")
+    testImplementation("com.badlogicgames.gdx:gdx-freetype-platform:${gdxVer}:natives-desktop")
 
     if(project.property("enableGraalNative") == "true") {
         implementation("io.github.berstanio:gdx-svmhelper-annotations:${project.property("graalHelperVersion")}")
@@ -21,6 +27,14 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 // 创建源代码 JAR

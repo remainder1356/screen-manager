@@ -1,14 +1,11 @@
 package com.remainder.screen;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.remainder.input.HotkeyListener;
 import com.remainder.util.AutoLogger;
 import com.remainder.util.Stage;
 
@@ -16,33 +13,17 @@ import com.remainder.util.Stage;
 public abstract class Screen implements com.badlogic.gdx.Screen, AutoLogger {
     protected Screen lastScreen;
     public Stage stage;
+    public HotkeyListener hotkeyListener;
     public Batch batch;
     /**
      * Pause is currently unused.
      * Override {@link #update(float)} and {@link #render(float)} to implement custom pause behavior.
      */
     public boolean pause = false;
-    private boolean hasDisposed = false;
-    private boolean enableEscReturn = false;
-    private final InputListener escReturnRunnable = new InputListener() {
-        @Override
-        public boolean keyUp(InputEvent event, int keycode) {
-            if (keycode == Input.Keys.ESCAPE) {
-                Gdx.app.postRunnable(() -> {
-                    if (ScreenManager.instance.hasLastScreen()) {
-                        ScreenManager.instance.toLastScreen();
-                    } else {
-                        Gdx.app.exit();
-                    }
-                });
-            }
-            return false;
-        }
-    };
 
     @Override
     public void show() {
-        checkEscReturn();
+
     }
 
     public void update(float delta) {
@@ -67,23 +48,8 @@ public abstract class Screen implements com.badlogic.gdx.Screen, AutoLogger {
         stage.getViewport().update(width, height);
     }
 
-    /**
-     * If you want to dispose resources, override {@link #disposeResources()}.
-     */
     @Override
-    public final void dispose() {
-        if (hasDisposed) {
-            error("The screen is already disposed.");
-            return;
-        }
-
-        disposeResources();
-        hasDisposed = true;
-
-        if (lastScreen != null && !lastScreen.hasDisposed) lastScreen.dispose();
-    }
-
-    protected void disposeResources() {
+    public void dispose() {
         if (stage != null) stage.dispose();
     }
 
@@ -115,21 +81,5 @@ public abstract class Screen implements com.badlogic.gdx.Screen, AutoLogger {
         textureRegion.flip(false, true);
 
         return textureRegion;
-    }
-
-    public boolean isEnableEscReturn() {
-        return enableEscReturn;
-    }
-
-    public void setEnableEscReturn(boolean enableEscReturn) {
-        this.enableEscReturn = enableEscReturn;
-        checkEscReturn();
-    }
-
-    private void checkEscReturn() {
-        if (stage == null) return;
-
-        if (enableEscReturn) stage.addListener(escReturnRunnable);
-        else stage.removeListener(escReturnRunnable);
     }
 }
