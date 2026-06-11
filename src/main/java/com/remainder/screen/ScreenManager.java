@@ -35,9 +35,9 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
 
     /**
      * The color used to clear the screen before rendering.
-     * Default is TAN, but can be customized.
+     * Default is CLEAR, but can be customized.
      */
-    public Color clearColor = Color.TAN;
+    public Color clearColor = Color.CLEAR;
 
     /**
      * The camera used for rendering the screen content.
@@ -185,6 +185,7 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
         screen.stage = new Stage(viewport);
         screen.hotkeyListener = new HotkeyListener();
         screen.stage.setDebugAll(debug);
+        screen.stage.addListener(screen.hotkeyListener);
         screen.batch = screen.stage.getBatch();
         Gdx.input.setInputProcessor(screen.stage);
         screen.show();

@@ -12,16 +12,22 @@ repositories {
 dependencies {
     var gdxVer = project.property("gdxVersion")
 
-    implementation("com.badlogicgames.gdx:gdx:${gdxVer}")
-    implementation("com.badlogicgames.gdx:gdx-freetype:${gdxVer}")
+    implementation("com.badlogicgames.gdx:gdx:$gdxVer")
+    implementation("com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVer")
+    implementation("com.badlogicgames.gdx:gdx-freetype:$gdxVer")
 
     testImplementation("com.kotcrab.vis:vis-ui:${project.property("visUiVersion")}")
-    testImplementation("com.badlogicgames.gdx:gdx-backend-lwjgl3:${gdxVer}")
-    testImplementation("com.badlogicgames.gdx:gdx-platform:${gdxVer}:natives-desktop")
-    testImplementation("com.badlogicgames.gdx:gdx-freetype-platform:${gdxVer}:natives-desktop")
+    testImplementation("com.badlogicgames.gdx:gdx-platform:$gdxVer:natives-desktop")
+    testImplementation("com.badlogicgames.gdx:gdx-freetype-platform:$gdxVer:natives-desktop")
+    testImplementation("com.badlogicgames.gdx:gdx-tools:$gdxVer") {
+        exclude("com.badlogicgames.gdx", "gdx-backend-lwjgl")
+    }
 
     if(project.property("enableGraalNative") == "true") {
-        implementation("io.github.berstanio:gdx-svmhelper-annotations:${project.property("graalHelperVersion")}")
+        var graalHelperVersion = project.property("graalHelperVersion")
+        implementation("io.github.berstanio:gdx-svmhelper-annotations:${graalHelperVersion}")
+        testImplementation("io.github.berstanio:gdx-svmhelper-backend-lwjgl3:${graalHelperVersion}")
+        testImplementation("io.github.berstanio:gdx-svmhelper-extension-freetype:${graalHelperVersion}")
     }
 }
 
