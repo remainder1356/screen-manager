@@ -3,6 +3,7 @@ package com.remainder.input;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntMap;
 
 import java.util.HashMap;
@@ -11,8 +12,8 @@ import java.util.Map;
 import static com.remainder.input.ComboKey.*;
 
 public class HotkeyListener extends InputListener {
-    private final IntMap<Runnable> hotkeys = new IntMap<>();
-    private final Map<ComboKey, Runnable> comboKeys = new HashMap<>();
+    private final IntMap<Array<Runnable>> hotkeys = new IntMap<>();
+    private final Map<ComboKey, Array<Runnable>> comboKeys = new HashMap<>();
     
     /**
      * Single key hotkey
@@ -20,7 +21,10 @@ public class HotkeyListener extends InputListener {
      * @param keycode For example: Input.Keys.ESCAPE, Input.Keys.ENTER
      */
     public void registerHotkey(int keycode, Runnable callback) {
-        hotkeys.put(keycode, callback);
+        if (!hotkeys.containsKey(keycode)) {
+            hotkeys.put(keycode, new Array<>(true, 1));
+        }
+        hotkeys.get(keycode).add(callback);
     }
 
     public void unregisterHotkey(int keycode) {
@@ -33,7 +37,10 @@ public class HotkeyListener extends InputListener {
      * @param keyCombination For example: "CTRL+C", "ALT+F4"
      */
     public void registerComboKey(ComboKey keyCombination, Runnable callback) {
-        comboKeys.put(keyCombination, callback);
+        if (!comboKeys.containsKey(keyCombination)) {
+            comboKeys.put(keyCombination, new Array<>(true, 1));
+        }
+        comboKeys.get(keyCombination).add(callback);
     }
 
     public void unregisterComboKey(ComboKey keyCombination) {
@@ -57,13 +64,13 @@ public class HotkeyListener extends InputListener {
         ComboKey comboKey = buildComboKey(keycode);
         
         if (comboKeys.containsKey(comboKey)) {
-            Gdx.app.postRunnable(comboKeys.get(comboKey));
+            Gdx.app.postRunnable(() -> comboKeys.get(comboKey).forEach(Runnable::run));
             return true;
         }
         
         // 检查是否有注册的单个按键热键
         if (hotkeys.containsKey(keycode)) {
-            Gdx.app.postRunnable(hotkeys.get(keycode));
+            Gdx.app.postRunnable(() -> hotkeys.get(keycode).forEach(Runnable::run));
             return true;
         }
         
