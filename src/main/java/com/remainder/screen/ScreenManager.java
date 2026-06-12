@@ -2,6 +2,7 @@ package com.remainder.screen;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Graphics;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -20,6 +21,8 @@ import com.remainder.util.font.DefaultFont;
 
 import java.util.Objects;
 import java.util.Stack;
+
+import org.lwjgl.glfw.GLFW;
 
 /**
  * Manages the lifecycle and transitions between different screens in the application.
@@ -394,5 +397,10 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
 
     public ScreenTransition getScreenTransition() {
         return screenTransition;
+    }
+
+    public static void setApplicationFloating(boolean floating) {
+        long handle = ((Lwjgl3Graphics) Gdx.graphics).getWindow().getWindowHandle();
+        GLFW.glfwSetWindowAttrib(handle, GLFW.GLFW_FLOATING, (floating) ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
     }
 }

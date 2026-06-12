@@ -1,7 +1,7 @@
 package com.remainder.input;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Input.Keys;
 import java.util.Objects;
 
 public record ComboKey(int keycode, boolean ctrl, boolean alt, boolean shift) {
@@ -34,15 +34,15 @@ public record ComboKey(int keycode, boolean ctrl, boolean alt, boolean shift) {
     }
 
     public static boolean isCtrlPressed() {
-        return Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Input.Keys.CONTROL_RIGHT);
+        return Gdx.input.isKeyPressed(Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Keys.CONTROL_RIGHT);
     }
 
     public static boolean isAltPressed() {
-        return Gdx.input.isKeyPressed(Input.Keys.ALT_LEFT) || Gdx.input.isKeyPressed(Input.Keys.ALT_RIGHT);
+        return Gdx.input.isKeyPressed(Keys.ALT_LEFT) || Gdx.input.isKeyPressed(Keys.ALT_RIGHT);
     }
 
     public static boolean isShiftPressed() {
-        return Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT);
+        return Gdx.input.isKeyPressed(Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Keys.SHIFT_RIGHT);
     }
 
     @Override
