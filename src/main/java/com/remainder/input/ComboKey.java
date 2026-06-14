@@ -1,6 +1,7 @@
 package com.remainder.input;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import java.util.Objects;
 
@@ -43,6 +44,11 @@ public record ComboKey(int keycode, boolean ctrl, boolean alt, boolean shift) {
 
     public static boolean isShiftPressed() {
         return Gdx.input.isKeyPressed(Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Keys.SHIFT_RIGHT);
+    }
+
+    @Override
+    public String toString() {
+        return (ctrl ? "Ctrl+" : "") + (alt ? "Alt+" : "") + (shift ? "Shift+" : "") + Input.Keys.toString(keycode);
     }
 
     @Override

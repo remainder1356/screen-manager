@@ -128,6 +128,11 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
     private boolean toLast = false;
 
     /**
+     * The window handle, used to set glfw attributes.
+     */
+    private long window;
+
+    /**
      * Initializes the ScreenManager and sets up the basic rendering infrastructure.
      *
      * <p>This method is called once during application startup. It initializes:</p>
@@ -399,8 +404,29 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
         return screenTransition;
     }
 
-    public static void setApplicationFloating(boolean floating) {
-        long handle = ((Lwjgl3Graphics) Gdx.graphics).getWindow().getWindowHandle();
-        GLFW.glfwSetWindowAttrib(handle, GLFW.GLFW_FLOATING, (floating) ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
+    public void setFloating(boolean value) {
+        setWindow(GLFW.GLFW_FLOATING, value);
+    }
+
+    public void setMousePassThrough(boolean value) {
+        setWindow(GLFW.GLFW_MOUSE_PASSTHROUGH, value);
+    }
+
+    protected void setWindow(int attrib, boolean value) {
+        GLFW.glfwSetWindowAttrib(getWindowHandle(), attrib, (value) ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
+    }
+
+    protected long getWindowHandle() {
+        if (window == 0) {
+            log("Try to get window handle.");
+            if (Gdx.graphics instanceof Lwjgl3Graphics graphics) {
+                window = graphics.getWindow().getWindowHandle();
+                log("Get window handle success!");
+            }else {
+                error("Get window handle failed!");
+            }
+        }
+
+        return window;
     }
 }
