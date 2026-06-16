@@ -18,7 +18,6 @@ public class HotkeyListener extends InputListener implements AutoLogger {
     private final IntMap<Array<Runnable>> hotkeys = new IntMap<>();
     private final Map<ComboKey, Array<Runnable>> comboKeys = new HashMap<>();
 
-    
     /**
      * Single key hotkey
      * 
@@ -31,6 +30,52 @@ public class HotkeyListener extends InputListener implements AutoLogger {
         hotkeys.get(keycode).add(callback);
         return callback;
     }
+
+    /**
+     * Single key hotkey with CTRL modifier
+     *
+     * @param keycode For example: Input.Keys.ESCAPE -> CTRL + ESCAPE, Input.Keys.ENTER -> CTRL + ENTER
+     */
+    public Runnable registerHotkeyWithCtrl(int keycode, Runnable callback) {
+        Runnable finalCallback = () -> {
+            if (isCtrlPressed()) {
+                callback.run();
+            }
+        };
+        registerHotkey(keycode, finalCallback);
+        return finalCallback;
+    }
+
+    /**
+     * Single key hotkey with ALT modifier
+     *
+     * @param keycode For example: Input.Keys.ESCAPE -> ALT + ESCAPE, Input.Keys.ENTER -> ALT + ENTER
+     */
+    public Runnable registerHotkeyWithAlt(int keycode, Runnable callback) {
+        Runnable finalCallback = () -> {
+            if (isAltPressed()) {
+                callback.run();
+            }
+        };
+        registerHotkey(keycode, finalCallback);
+        return finalCallback;
+    }
+
+    /**
+     * Single key hotkey with SHIFT modifier
+     *
+     * @param keycode For example: Input.Keys.ESCAPE -> SHIFT + ESCAPE, Input.Keys.ENTER -> SHIFT + ENTER
+     */
+    public Runnable registerHotkeyWithShift(int keycode, Runnable callback) {
+        Runnable finalCallback = () -> {
+            if (isShiftPressed()) {
+                callback.run();
+            }
+        };
+        registerHotkey(keycode, finalCallback);
+        return finalCallback;
+    }
+
 
     public void unregisterHotkey(int keycode) {
         hotkeys.remove(keycode);
@@ -49,7 +94,7 @@ public class HotkeyListener extends InputListener implements AutoLogger {
      * Combination key hotkey.
      * Do not use combination keys like "ALT+F4" or "CTRL+SPACE".
      * If you want to use combination keys like that,
-     * use {@link ComboKey#isAltPressed()} in callback and register single hotkey.
+     * use {@code Gdx.input.isKeyPressed(keycode)} in callback and register single hotkey "CTRL" or else.
      * @param keyCombination For example: "CTRL+A"
      */
     public Runnable registerComboKey(ComboKey keyCombination, Runnable callback) {
