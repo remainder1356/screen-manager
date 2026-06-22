@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.remainder.input.HotkeyListener;
 import com.remainder.util.AutoLogger;
-import com.remainder.util.Stage;
+import com.remainder.input.Stage;
 
 
 public abstract class Screen implements com.badlogic.gdx.Screen, AutoLogger {
@@ -45,7 +45,7 @@ public abstract class Screen implements com.badlogic.gdx.Screen, AutoLogger {
 
     @Override
     public void resize(int width, int height) {
-        stage.getViewport().update(width, height);
+        stage.getViewport().update(width, height,true);
     }
 
     @Override

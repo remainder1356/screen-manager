@@ -16,7 +16,7 @@ import com.remainder.input.HotkeyListener;
 import com.remainder.screen.transition.FadeScreenTransition;
 import com.remainder.screen.transition.ScreenTransition;
 import com.remainder.util.AutoLogger;
-import com.remainder.util.Stage;
+import com.remainder.input.Stage;
 import com.remainder.util.font.DefaultFont;
 
 import java.util.Objects;
@@ -175,14 +175,10 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
      * @param screen The screen to set as the current screen.
      */
     public void setScreen(Screen screen) {
-        setScreen(screen, null, false);
+        setScreen(screen, null);
     }
 
     public void setScreen(Screen screen, ScreenTransition transition) {
-        setScreen(screen, transition, false);
-    }
-
-    public void setScreen(Screen screen, ScreenTransition transition, boolean debug) {
         debug("Start setting screen: " + screen.getTag());
 
         if (isTransitioning) {
@@ -192,7 +188,6 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
         // initialize stage
         screen.stage = new Stage(viewport);
         screen.hotkeyListener = new HotkeyListener();
-        screen.stage.setDebugAll(debug);
         screen.stage.addListener(screen.hotkeyListener);
         screen.batch = screen.stage.getBatch();
         Gdx.input.setInputProcessor(screen.stage);
@@ -220,7 +215,7 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
     }
 
     public void toLastScreen() {
-        toLastScreen(new FadeScreenTransition(), false);
+        toLastScreen(new FadeScreenTransition());
     }
 
     /**
@@ -229,10 +224,10 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
      * A -> B -> A -> C <= B == toLast()
      * A -> B -> A => C(cur)
      */
-    public void toLastScreen(ScreenTransition transition, boolean debug) {
+    public void toLastScreen(ScreenTransition transition) {
         if (hasLastScreen()) {
             toLast = true;
-            setScreen(Objects.requireNonNull(lasts.pop()), transition, debug);
+            setScreen(Objects.requireNonNull(lasts.pop()), transition);
         }else {
             error("The screen is not exists.");
         }

@@ -1,23 +1,23 @@
 # Screen Manager
 
-一个基于 [LibGDX](https://libgdx.com/) 的屏幕管理与切换库，提供灵活的屏幕生命周期管理、热键监听、屏幕过渡动画等功能。
+A screen management and transition library built on top of [LibGDX](https://libgdx.com/), providing flexible screen lifecycle management, hotkey listening, screen transition animations, and more.
 
-**快速跳转**: [特性](#特性) | [安装](#安装) | [快速开始](#快速开始) | [核心组件](#核心组件) | [API示例](#api示例)
-
----
-
-## 特性
-
-- **屏幕管理** - 简单的屏幕切换与历史记录管理
-- **过渡动画** - 支持淡入淡出、滑动等多种过渡效果
-- **热键系统** - 便捷的键盘快捷键注册，支持组合键
-- **分屏布局** - 内置9宫格分屏Stage，快速构建复杂UI
-- **优先级渲染** - Actor层级自定义，UI渲染顺序可控
-- **自动释放** - 可配置自动释放旧屏幕资源
+**Quick Links**: [Features](#features) | [Installation](#installation) | [Quick Start](#quick-start) | [Core Components](#core-components) | [API Examples](#api-examples)
 
 ---
 
-## 安装
+## Features
+
+- **Screen Management** - Simple screen switching with history tracking
+- **Transition Animations** - Support for fade, slide, and other transition effects
+- **Hotkey System** - Convenient keyboard shortcut registration with combo key support
+- **Split Layout** - Built-in 9-region split Stage for complex UI layouts
+- **Priority Rendering** - Customizable Actor layers for controlled UI rendering order
+- **Auto Disposal** - Optional automatic resource cleanup for old screens
+
+---
+
+## Installation
 
 ### Gradle (Kotlin DSL)
 
@@ -49,9 +49,9 @@ dependencies {
 
 ---
 
-## 快速开始
+## Quick Start
 
-### 1. 创建 Application
+### 1. Create Your Application
 
 ```java
 import com.badlogic.gdx.backends.lwjgl3.*;
@@ -72,7 +72,7 @@ public class MyApp extends ScreenManager {
 }
 ```
 
-### 2. 创建 Screen
+### 2. Create a Screen
 
 ```java
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -86,86 +86,86 @@ public class MainMenuScreen extends Screen {
 }
 ```
 
-### 3. 切换屏幕
+### 3. Switch Screens
 
 ```java
-// 普通切换
+// Normal switch
 setScreen(new GameScreen());
 
-// 带过渡动画
+// With transition animation
 setScreen(new GameScreen(), new FadeScreenTransition());
 
-// 返回上一屏幕
+// Go back to previous screen
 toLastScreen();
 ```
 
 ---
 
-## 核心组件
+## Core Components
 
 ### ScreenManager
 
-屏幕管理器，负责所有屏幕的生命周期。
+The screen manager, responsible for all screen lifecycles.
 
-| 方法 | 说明 |
-|------|------|
-| `setScreen(Screen)` | 切换到指定屏幕 |
-| `setScreen(Screen, ScreenTransition)` | 带过渡动画切换 |
-| `toLastScreen()` | 返回上一屏幕 |
-| `toLastScreen(ScreenTransition)` | 带动画返回上一屏幕 |
-| `getCurScreen()` | 获取当前屏幕 |
-| `hasLastScreen()` | 是否有上一屏幕 |
-| `setAutoDispose(boolean)` | 设置是否自动释放旧屏幕 |
+| Method | Description |
+|--------|-------------|
+| `setScreen(Screen)` | Switch to the specified screen |
+| `setScreen(Screen, ScreenTransition)` | Switch with transition animation |
+| `toLastScreen()` | Go back to the previous screen |
+| `toLastScreen(ScreenTransition)` | Go back with animation |
+| `getCurScreen()` | Get the current screen |
+| `hasLastScreen()` | Check if there's a previous screen |
+| `setAutoDispose(boolean)` | Set auto disposal of old screens |
 
 ### Screen
 
-屏幕基类，继承它来创建你的游戏屏幕。
+Base screen class. Extend it to create your game screens.
 
 ```java
 public class MyScreen extends Screen {
     @Override
     public void show() {
-        // 屏幕显示时调用
+        // Called when screen is shown
     }
 
     @Override
     public void renderOther(float delta) {
-        // 自定义渲染（stage.draw()之外）
+        // Custom rendering (outside of stage.draw())
     }
 }
 ```
 
 ### HotkeyListener
 
-热键监听器，处理键盘输入。
+Hotkey listener for handling keyboard input.
 
 ```java
-// ESC键
+// Single key
 hotkeyListener.registerHotkey(Keys.ESCAPE, () -> doSomething());
 
-// Ctrl+S
+// With Ctrl modifier
 hotkeyListener.registerHotkeyWithCtrl(Keys.S, () -> save());
 
-// 推荐：使用ComboKey处理组合键
+// Recommended: Use ComboKey for combo keys
 hotkeyListener.registerComboKey(ComboKey.ctrl(Keys.S), () -> save());
 hotkeyListener.registerComboKey(ComboKey.ctrlShift(Keys.DELETE), () -> hardReset());
 ```
 
 ### SplitStage
 
-分屏布局，适合游戏设置界面或聊天UI。
+Split layout, suitable for game settings UI or chat interfaces.
 
 ```java
 SplitStage splitStage = new SplitStage(stage.getViewport(), stage.getBatch());
 splitStage.setSkin(VisUI.getSkin());
 
-// 添加内容到各个区域
+// Add content to regions
 splitStage.getLeft().add("Left Panel");
 splitStage.getCenter().add("Center Panel");
 splitStage.getTop().add("Top Bar");
 ```
 
-布局结构：
+Layout structure:
 ```
 ┌──────────┬──────────┬──────────┐
 │ topLeft  │   top    │ topRight │
@@ -178,52 +178,52 @@ splitStage.getTop().add("Top Bar");
 
 ---
 
-## API示例
+## API Examples
 
-### 屏幕切换与过渡
+### Screen Transitions
 
 ```java
-// 淡入淡出（默认0.5秒）
+// Fade (default 0.5 seconds)
 setScreen(newScreen, new FadeScreenTransition());
 
-// 淡入淡出，自定义时长
+// Fade with custom duration
 setScreen(newScreen, new FadeScreenTransition(1.0f));
 
-// 滑动过渡（从左滑入）
+// Slide from left
 setScreen(newScreen, new SlideScreenTransition(SlideScreenTransition.FROM_LEFT));
 
-// 滑动过渡，四个方向
-SlideScreenTransition.FROM_LEFT   // 从左
-SlideScreenTransition.FROM_RIGHT  // 从右
-SlideScreenTransition.FROM_TOP    // 从上
-SlideScreenTransition.FROM_BOTTOM // 从下
+// Slide from any direction
+SlideScreenTransition.FROM_LEFT   // From left
+SlideScreenTransition.FROM_RIGHT  // From right
+SlideScreenTransition.FROM_TOP   // From top
+SlideScreenTransition.FROM_BOTTOM // From bottom
 ```
 
-### 热键注册
+### Hotkey Registration
 
 ```java
 import com.badlogic.gdx.Input.Keys;
 
-// 单键
+// Single keys
 hotkeyListener.registerHotkey(Keys.ESCAPE, this::onEscape);
 hotkeyListener.registerHotkey(Keys.ENTER, this::onEnter);
 
-// 带修饰符
+// With modifiers
 hotkeyListener.registerHotkeyWithCtrl(Keys.S, this::save);
 hotkeyListener.registerHotkeyWithAlt(Keys.F4, this::quit);
 hotkeyListener.registerHotkeyWithShift(Keys.TAB, this::prevTab);
 
-// 组合键（推荐方式）
+// Combo keys (recommended)
 hotkeyListener.registerComboKey(ComboKey.ctrl(Keys.N), this::newFile);
 hotkeyListener.registerComboKey(ComboKey.ctrlAlt(Keys.DEL), this::forceQuit);
 hotkeyListener.registerComboKey(ComboKey.all(Keys.R), this::hardReset);
 
-// 注销热键
+// Unregister hotkeys
 hotkeyListener.unregisterHotkey(Keys.ESCAPE);
 hotkeyListener.unregisterHotkey(Keys.S, saveCallback);
 ```
 
-### ComboKey 组合键工厂
+### ComboKey Factories
 
 ```java
 ComboKey.ctrl(Keys.S)          // Ctrl+S
@@ -235,67 +235,67 @@ ComboKey.shiftAlt(Keys.END)    // Shift+Alt+End
 ComboKey.all(Keys.R)           // Ctrl+Alt+Shift+R
 ```
 
-### 窗口控制
+### Window Control
 
 ```java
-// 窗口悬浮
+// Make window floating
 setFloating(true);
 
-// 鼠标穿透（点击穿透到下层窗口）
+// Enable mouse passthrough (clicks pass through to underlying windows)
 setMousePassThrough(true);
 ```
 
 ---
 
-## 项目结构
+## Project Structure
 
 ```
 src/main/java/com/remainder/
 ├── screen/
-│   ├── ScreenManager.java       # 屏幕管理器
-│   ├── Screen.java              # 屏幕基类
-│   └── transition/              # 过渡动画
+│   ├── ScreenManager.java       # Screen manager
+│   ├── Screen.java             # Screen base class
+│   └── transition/             # Transition animations
 │       ├── ScreenTransition.java
 │       ├── FadeScreenTransition.java
 │       └── SlideScreenTransition.java
 ├── input/
-│   ├── Stage.java              # 扩展Stage
-│   ├── SplitStage.java         # 分屏Stage
-│   ├── HotkeyListener.java     # 热键监听
-│   └── ComboKey.java           # 组合键
+│   ├── Stage.java              # Extended Stage
+│   ├── SplitStage.java         # Split Stage
+│   ├── HotkeyListener.java     # Hotkey listener
+│   └── ComboKey.java          # Combo key record
 └── util/
-    ├── AutoLogger.java         # 日志接口
-    ├── PriorityGroup.java      # 优先级容器
-    ├── ReflectUtil.java        # 反射工具
-    └── font/                   # 字体支持
+    ├── AutoLogger.java         # Logging interface
+    ├── PriorityGroup.java      # Priority container
+    ├── ReflectUtil.java        # Reflection utility
+    └── font/                  # Font support
         ├── Font.java
         └── DefaultFont.java
 ```
 
 ---
 
-## 构建
+## Build
 
 ```bash
-# 编译
+# Compile
 ./gradlew compileJava
 
-# 测试
+# Test
 ./gradlew test
 
-# 构建JAR
+# Build JAR
 ./gradlew jar
 ```
 
 ---
 
-## 依赖
+## Dependencies
 
-| 依赖 | 版本 | 用途 |
-|------|------|------|
-| LibGDX | 1.13.5 | 核心框架 |
-| libGDX Backend LWJGL3 | 1.13.5 | 桌面支持 |
-| FreeType | 1.13.5 | 字体渲染 |
+| Dependency | Version | Purpose |
+|------------|---------|---------|
+| LibGDX | 1.13.5 | Core framework |
+| libGDX Backend LWJGL3 | 1.13.5 | Desktop support |
+| FreeType | 1.13.5 | Font rendering |
 
 ---
 
