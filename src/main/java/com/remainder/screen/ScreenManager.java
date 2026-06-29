@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.HdpiUtils;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -192,6 +194,7 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
         screen.batch = screen.stage.getBatch();
         Gdx.input.setInputProcessor(screen.stage);
         screen.show();
+        screen.resize(currentWidth, currentHeight);
 
         nextScreen = screen;
 
@@ -293,10 +296,16 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
                     finishTransition();
                     return;
                 }
-                screenTransition.render(curScreen.getFBO(lastFBO, delta), nextScreen.getFBO(curFBO, delta),
-                        delta, nextScreen.batch);
+
+                TextureRegion cur = curScreen.getFBO(lastFBO, delta);
+                TextureRegion next = nextScreen.getFBO(curFBO, delta);
+
+                nextScreen.batch.setProjectionMatrix(curScreen.stage.getViewport().getCamera().combined);
+                nextScreen.batch.begin();
+                screenTransition.render(cur, next, delta, nextScreen.batch);
+                nextScreen.batch.end();
             } else {
-                error("Lost screen transition in a unrealizable way.");
+                error("Lost screen transition in an unrealizable way.");
             }
         } else {
             if (curScreen != null) {
@@ -307,6 +316,9 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
 
     @Override
     public void resize(int width, int height) {
+        currentHeight = height;
+        currentWidth = width;
+
         if (curScreen != null) {
             curScreen.resize(width, height);
         }
@@ -393,6 +405,14 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
     public void setCurrentHeight(int currentHeight) {
         this.currentHeight = currentHeight;
         resize(currentWidth, currentHeight);
+    }
+
+    public float getScreenWidth() {
+        return viewport.getWorldWidth() + viewport.getLeftGutterWidth() + viewport.getRightGutterWidth();
+    }
+
+    public float getScreenHeight() {
+        return viewport.getWorldHeight() + viewport.getTopGutterHeight() + viewport.getBottomGutterHeight();
     }
 
     public ScreenTransition getScreenTransition() {
