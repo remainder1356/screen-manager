@@ -33,14 +33,6 @@ public abstract class Screen implements com.badlogic.gdx.Screen, AutoLogger {
     @Override
     public void render(float delta) {
         stage.draw();
-
-        batch.begin();
-        renderOther(delta);
-        batch.end();
-    }
-
-    public void renderOther(float delta){
-
     }
 
     @Override

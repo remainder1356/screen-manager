@@ -41,7 +41,7 @@ public class SplitStage extends Stage{
         if (bottomLeft == null) bottomLeft = new Table();
         if (bottomRight == null) bottomRight = new Table();
 
-        refreshTables();
+        refreshOffsets();
 
         tables.addActor(top);
         tables.addActor(bottom);
@@ -71,6 +71,7 @@ public class SplitStage extends Stage{
         float x1 = offLeft + sWidth;
         float x2 = usWidth - offRight;
         float x3 = getWidth() - offRight;
+
         float y0 = offTop;
         float y1 = offTop + sHeight;
         float y2 = usHeight - offBottom;
@@ -97,6 +98,13 @@ public class SplitStage extends Stage{
         setOffBottom(-v.getTopGutterHeight());
 
         refreshTables();
+    }
+
+    @Override
+    public void clear() {
+        super.clear();
+
+        addUIActor(tables);
     }
 
     public void setSkin(Skin skin) {
@@ -157,6 +165,7 @@ public class SplitStage extends Stage{
 
     public void setSplit(float split) {
         this.split = split;
+        refreshTables();
     }
 
     public float getOffTop() {
@@ -165,6 +174,7 @@ public class SplitStage extends Stage{
 
     public void setOffTop(float offTop) {
         this.offTop = offTop;
+        refreshTables();
     }
 
     public float getOffBottom() {
@@ -173,6 +183,7 @@ public class SplitStage extends Stage{
 
     public void setOffBottom(float offBottom) {
         this.offBottom = offBottom;
+        refreshTables();
     }
 
     public float getOffLeft() {
@@ -181,6 +192,7 @@ public class SplitStage extends Stage{
 
     public void setOffLeft(float offLeft) {
         this.offLeft = offLeft;
+        refreshTables();
     }
 
     public float getOffRight() {
@@ -189,6 +201,7 @@ public class SplitStage extends Stage{
 
     public void setOffRight(float offRight) {
         this.offRight = offRight;
+        refreshTables();
     }
 
     public Table getTopLeft() {

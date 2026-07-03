@@ -1,5 +1,7 @@
 # Screen Manager
 
+[![](https://jitpack.io/v/remainder1356/screen-manager.svg)](https://jitpack.io/#remainder1356/screen-manager)
+
 一个基于 [LibGDX](https://libgdx.com/) 的屏幕管理与切换库，提供灵活的屏幕生命周期管理、热键监听、屏幕过渡动画等功能。
 
 **快速跳转**: [特性](#特性) | [安装](#安装) | [快速开始](#快速开始) | [核心组件](#核心组件) | [API示例](#api示例)

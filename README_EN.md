@@ -1,5 +1,7 @@
 # Screen Manager
 
+[![](https://jitpack.io/v/remainder1356/screen-manager.svg)](https://jitpack.io/#remainder1356/screen-manager)
+
 A screen management and transition library built on top of [LibGDX](https://libgdx.com/), providing flexible screen lifecycle management, hotkey listening, screen transition animations, and more.
 
 **Quick Links**: [Features](#features) | [Installation](#installation) | [Quick Start](#quick-start) | [Core Components](#core-components) | [API Examples](#api-examples)
