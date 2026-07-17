@@ -24,6 +24,7 @@ import com.remainder.util.font.DefaultFont;
 import java.util.Objects;
 import java.util.Stack;
 
+import com.remainder.util.font.Font;
 import org.lwjgl.glfw.GLFW;
 
 /**
@@ -134,6 +135,8 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
      */
     private long window;
 
+    private Font font;
+
     /**
      * Initializes the ScreenManager and sets up the basic rendering infrastructure.
      *
@@ -168,6 +171,7 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
                 HdpiUtils.toBackBufferY(currentHeight), hasDepth);
 
         lasts = new Stack<>();
+        font = DefaultFont.getFont();
 
         instance = this;
     }
@@ -186,15 +190,6 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
         if (isTransitioning) {
             finishTransition();
         }
-
-        // initialize stage
-        screen.stage = new Stage(viewport);
-        screen.hotkeyListener = new HotkeyListener();
-        screen.stage.addListener(screen.hotkeyListener);
-        screen.batch = screen.stage.getBatch();
-        Gdx.input.setInputProcessor(screen.stage);
-        screen.show();
-        screen.resize(currentWidth, currentHeight);
 
         nextScreen = screen;
 
@@ -215,6 +210,15 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
         } else {
             nextScreen();
         }
+
+        // initialize stage
+        screen.stage = new Stage(viewport);
+        screen.hotkeyListener = new HotkeyListener();
+        screen.stage.addListener(screen.hotkeyListener);
+        screen.batch = screen.stage.getBatch();
+        Gdx.input.setInputProcessor(screen.stage);
+        screen.show();
+        screen.resize(currentWidth, currentHeight);
     }
 
     public void toLastScreen() {
@@ -360,8 +364,8 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
         });
 
         // dispose default font
-        if (DefaultFont.getFont() != null) {
-            DefaultFont.getFont().dispose();
+        if (font != null) {
+            font.dispose();
         }
     }
 
