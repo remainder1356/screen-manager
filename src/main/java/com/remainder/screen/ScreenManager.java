@@ -158,7 +158,6 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
         currentHeight = Gdx.graphics.getHeight();
         camera = new OrthographicCamera();
         hudCamera = new OrthographicCamera();
-
         viewport = new ExtendViewport(currentWidth, currentHeight, camera);
         hudViewport = new ExtendViewport(currentWidth, currentHeight, hudCamera);
 

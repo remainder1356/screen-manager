@@ -56,16 +56,6 @@ public class Stage extends com.badlogic.gdx.scenes.scene2d.Stage{
     }
 
     @Override
-    public void act(float delta) {
-        super.act(delta);
-    }
-
-    @Override
-    public void setViewport(Viewport viewport) {
-        super.setViewport(viewport);
-    }
-
-    @Override
     public void addActor(Actor actor) {
         addActor(actor, 0);
     }
