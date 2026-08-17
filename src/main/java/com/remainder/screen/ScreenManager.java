@@ -50,7 +50,7 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
     /**
      * The camera used for rendering the screen content.
      */
-    protected Camera camera;
+    protected Camera camera, hudCamera;
     
     /**
      * The viewport that defines how the camera maps to screen coordinates.
@@ -157,8 +157,10 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
         currentWidth = Gdx.graphics.getWidth();
         currentHeight = Gdx.graphics.getHeight();
         camera = new OrthographicCamera();
+        hudCamera = new OrthographicCamera();
+
         viewport = new ExtendViewport(currentWidth, currentHeight, camera);
-        hudViewport = new ExtendViewport(currentWidth, currentHeight, camera);
+        hudViewport = new ExtendViewport(currentWidth, currentHeight, hudCamera);
 
         createFBO();
 
