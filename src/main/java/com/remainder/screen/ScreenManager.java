@@ -411,6 +411,22 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
         resize(currentWidth, currentHeight);
     }
 
+    public float getScreenX() {
+        return viewport.getScreenX();
+    }
+
+    public float getScreenY() {
+        return viewport.getScreenY();
+    }
+
+    public float getScreenScaleX() {
+        return getScreenWidth() / currentWidth;
+    }
+
+    public float getScreenScaleY() {
+        return getScreenHeight() / currentHeight;
+    }
+
     public float getScreenWidth() {
         return viewport.getWorldWidth() + viewport.getLeftGutterWidth() + viewport.getRightGutterWidth();
     }

@@ -26,9 +26,9 @@ import com.remainder.util.AutoLogger;
 import com.remainder.util.ReflectUtil;
 
 public class Font extends BitmapFont implements AutoLogger {
-    private FreeTypeFontGenerator generator;
-    private FreeTypeBitmapFontData data;
-    private FreeTypeFontParameter parameter;
+    private final FreeTypeFontGenerator generator;
+    private final FreeTypeBitmapFontData data;
+    private final FreeTypeFontParameter parameter;
 
     public Font(FreeTypeFontGenerator generator, int fontSize) {
         if (generator == null) {
@@ -39,8 +39,9 @@ public class Font extends BitmapFont implements AutoLogger {
 
             FreeTypeFontParameter param = new FreeTypeFontParameter();
             param.size = fontSize;
-            param.minFilter = TextureFilter.Nearest;
-            param.magFilter = TextureFilter.MipMapLinearNearest;
+            param.minFilter = TextureFilter.MipMapLinearLinear;
+            param.magFilter = TextureFilter.Linear;
+            param.genMipMaps = true;
             this.parameter = param;
 
             this.data = new FontData(generator, fontSize, this);
@@ -139,9 +140,9 @@ public class Font extends BitmapFont implements AutoLogger {
     }
 
     public static class FontData extends FreeTypeBitmapFontData {
-        private FreeTypeFontGenerator generator;
-        private int fontSize;
-        private transient Font font;
+        private final FreeTypeFontGenerator generator;
+        private final int fontSize;
+        private final transient Font font;
         private int page = 1;
 
         public FontData(FreeTypeFontGenerator generator, int fontSize, Font lbf) {

@@ -1,306 +1,281 @@
 # Screen Manager
 
-[![](https://jitpack.io/v/remainder1356/screen-manager.svg)](https://jitpack.io/#remainder1356/screen-manager)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![JitPack](https://jitpack.io/v/remainder1356/screen-manager.svg)](https://jitpack.io/#remainder1356/screen-manager)
 
-A screen management and transition library built on top of [LibGDX](https://libgdx.com/), providing flexible screen lifecycle management, hotkey listening, screen transition animations, and more.
-
-**Quick Links**: [Features](#features) | [Installation](#installation) | [Quick Start](#quick-start) | [Core Components](#core-components) | [API Examples](#api-examples)
+> A screen management library based on [LibGDX](https://libgdx.com/), providing screen switching, transition animations, hotkey registration, layout splitting, and more.
 
 ---
 
 ## Features
 
-- **Screen Management** - Simple screen switching with history tracking
-- **Transition Animations** - Support for fade, slide, and other transition effects
-- **Hotkey System** - Convenient keyboard shortcut registration with combo key support
-- **Split Layout** - Built-in 9-region split Stage for complex UI layouts
-- **Priority Rendering** - Customizable Actor layers for controlled UI rendering order
-- **Auto Disposal** - Optional automatic resource cleanup for old screens
+- **Screen Management** — Supports screen stack for forward/backward navigation.
+- **Transition Animations** — Built-in fade and slide screen transitions, with support for custom transitions.
+- **Hotkey System** — Supports single-key and combo-key (Ctrl/Alt/Shift) hotkey registration.
+- **Split Layout** — `SplitStage` provides a 9-grid layout (top/bottom/left/right/center/corners), auto-adapting to viewport offsets.
+- **Priority Rendering** — `PriorityGroup` controls actor draw order by priority (lower values are drawn first, at the bottom layer).
+- **Font Utilities** — FreeType-based font loading with dynamic glyph generation, customizable size, and scaling.
+- **Auto Logger** — `AutoLogger` interface provides convenient logging methods with automatic class name as tag.
+- **Reflection Utilities** — `ReflectUtil` provides convenient reflection field/method read/write tools.
+- **Window Attributes** — Supports setting window always-on-top and mouse passthrough.
 
 ---
 
-## Installation
+## Requirements
 
-### Gradle (Kotlin DSL)
-
-```kotlin
-repositories {
-    mavenCentral()
-    maven { url = uri("https://jitpack.io") }
-}
-
-dependencies {
-    implementation("com.github.remainder1356:screen-manager:1.0.11")
-}
-```
-
-### Maven
-
-```xml
-<repository>
-    <id>jitpack.io</id>
-    <url>https://jitpack.io</url>
-</repository>
-
-<dependency>
-    <groupId>com.github.remainder1356</groupId>
-    <artifactId>screen-manager</artifactId>
-    <version>1.0.11</version>
-</dependency>
-```
+- JDK 21+
+- Gradle 8.x
+- LibGDX 1.13.5+
 
 ---
 
 ## Quick Start
 
-### 1. Create Your Application
+### Add Dependency
+
+**Gradle (build.gradle.kts)**
+
+```kotlin
+repositories {
+    mavenCentral()
+    maven { url("https://jitpack.io") }
+}
+
+dependencies {
+    implementation("com.github.remainder1356:screen-manager:1.0.14")
+}
+```
+
+### Basic Usage
 
 ```java
-import com.badlogic.gdx.backends.lwjgl3.*;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import com.remainder.screen.Screen;
+import com.remainder.screen.ScreenManager;
+import com.remainder.screen.transition.FadeScreenTransition;
 
-public class MyApp extends ScreenManager {
+public class MyGame extends ScreenManager {
     @Override
     public void create() {
         super.create();
         setScreen(new MainMenuScreen());
     }
-
-    public static void main(String[] args) {
-        Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-        config.setTitle("My Game");
-        config.setWindowedMode(1280, 720);
-        new Lwjgl3Application(new MyApp(), config);
-    }
 }
-```
 
-### 2. Create a Screen
-
-```java
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.remainder.screen.Screen;
-
-public class MainMenuScreen extends Screen {
+class MainMenuScreen extends Screen {
     @Override
     public void show() {
-        stage.addUIActor(new Label("Welcome!", new Label.LabelStyle()));
+        super.show();
+        // Initialize UI elements
+        stage.addUIActor(/* ... */);
     }
 }
-```
-
-### 3. Switch Screens
-
-```java
-// Normal switch
-setScreen(new GameScreen());
-
-// With transition animation
-setScreen(new GameScreen(), new FadeScreenTransition());
-
-// Go back to previous screen
-toLastScreen();
 ```
 
 ---
 
-## Core Components
+## Detailed Features
 
-### ScreenManager
-
-The screen manager, responsible for all screen lifecycles.
-
-| Method | Description |
-|--------|-------------|
-| `setScreen(Screen)` | Switch to the specified screen |
-| `setScreen(Screen, ScreenTransition)` | Switch with transition animation |
-| `toLastScreen()` | Go back to the previous screen |
-| `toLastScreen(ScreenTransition)` | Go back with animation |
-| `getCurScreen()` | Get the current screen |
-| `hasLastScreen()` | Check if there's a previous screen |
-| `setAutoDispose(boolean)` | Set auto disposal of old screens |
-
-### Screen
-
-Base screen class. Extend it to create your game screens.
+### Screen Switching
 
 ```java
-public class MyScreen extends Screen {
-    @Override
-    public void show() {
-        // Called when screen is shown
-    }
+// Switch to a new screen (no transition)
+ScreenManager.instance.setScreen(new GameScreen());
 
-    @Override
-    public void renderOther(float delta) {
-        // Custom rendering (outside of stage.draw())
-    }
-}
+// Switch to a new screen (with fade transition)
+ScreenManager.instance.setScreen(new GameScreen(), new FadeScreenTransition());
+
+// Switch to a new screen (slide in from right)
+ScreenManager.instance.setScreen(new GameScreen(),
+    new SlideScreenTransition(SlideScreenTransition.FROM_RIGHT));
+
+// Go back to the previous screen (default fade transition)
+ScreenManager.instance.toLastScreen();
+
+// Go back to the previous screen (custom transition)
+ScreenManager.instance.toLastScreen(new SlideScreenTransition(SlideScreenTransition.FROM_LEFT));
 ```
 
-### HotkeyListener
-
-Hotkey listener for handling keyboard input.
+### Register Hotkeys
 
 ```java
-// Single key
-hotkeyListener.registerHotkey(Keys.ESCAPE, () -> doSomething());
+// Single-key hotkey
+hotkeyListener.registerHotkey(Input.Keys.ESCAPE, () -> {
+    ScreenManager.instance.toLastScreen();
+});
 
-// With Ctrl modifier
-hotkeyListener.registerHotkeyWithCtrl(Keys.S, () -> save());
+// Combo-key hotkey (Ctrl+S)
+hotkeyListener.registerComboKey(ComboKey.ctrl(Input.Keys.S), () -> {
+    System.out.println("Save");
+});
 
-// Recommended: Use ComboKey for combo keys
-hotkeyListener.registerComboKey(ComboKey.ctrl(Keys.S), () -> save());
-hotkeyListener.registerComboKey(ComboKey.ctrlShift(Keys.DELETE), () -> hardReset());
-```
-
-### SplitStage
-
-Split layout, suitable for game settings UI or chat interfaces.
-
-```java
-SplitStage splitStage = new SplitStage(stage.getViewport(), stage.getBatch());
-splitStage.setSkin(VisUI.getSkin());
-
-// Add content to regions
-splitStage.getLeft().add("Left Panel");
-splitStage.getCenter().add("Center Panel");
-splitStage.getTop().add("Top Bar");
-```
-
-Layout structure:
-```
-┌──────────┬──────────┬──────────┐
-│ topLeft  │   top    │ topRight │
-├──────────┼──────────┼──────────┤
-│   left   │  center │  right   │
-├──────────┼──────────┼──────────┤
-│bottomLeft│  bottom │bottomRight│
-└──────────┴──────────┴──────────┘
-```
-
----
-
-## API Examples
-
-### Screen Transitions
-
-```java
-// Fade (default 0.5 seconds)
-setScreen(newScreen, new FadeScreenTransition());
-
-// Fade with custom duration
-setScreen(newScreen, new FadeScreenTransition(1.0f));
-
-// Slide from left
-setScreen(newScreen, new SlideScreenTransition(SlideScreenTransition.FROM_LEFT));
-
-// Slide from any direction
-SlideScreenTransition.FROM_LEFT   // From left
-SlideScreenTransition.FROM_RIGHT  // From right
-SlideScreenTransition.FROM_TOP   // From top
-SlideScreenTransition.FROM_BOTTOM // From bottom
-```
-
-### Hotkey Registration
-
-```java
-import com.badlogic.gdx.Input.Keys;
-
-// Single keys
-hotkeyListener.registerHotkey(Keys.ESCAPE, this::onEscape);
-hotkeyListener.registerHotkey(Keys.ENTER, this::onEnter);
-
-// With modifiers
-hotkeyListener.registerHotkeyWithCtrl(Keys.S, this::save);
-hotkeyListener.registerHotkeyWithAlt(Keys.F4, this::quit);
-hotkeyListener.registerHotkeyWithShift(Keys.TAB, this::prevTab);
-
-// Combo keys (recommended)
-hotkeyListener.registerComboKey(ComboKey.ctrl(Keys.N), this::newFile);
-hotkeyListener.registerComboKey(ComboKey.ctrlAlt(Keys.DEL), this::forceQuit);
-hotkeyListener.registerComboKey(ComboKey.all(Keys.R), this::hardReset);
+// Hotkey with modifiers
+hotkeyListener.registerHotkeyWithCtrl(Input.Keys.Z, () -> {
+    System.out.println("Ctrl+Z Undo");
+});
+hotkeyListener.registerHotkeyWithAlt(Input.Keys.ENTER, () -> {
+    System.out.println("Alt+Enter");
+});
+hotkeyListener.registerHotkeyWithShift(Input.Keys.F1, () -> {
+    System.out.println("Shift+F1 Help");
+});
 
 // Unregister hotkeys
-hotkeyListener.unregisterHotkey(Keys.ESCAPE);
-hotkeyListener.unregisterHotkey(Keys.S, saveCallback);
+hotkeyListener.unregisterHotkey(Input.Keys.ESCAPE);
+hotkeyListener.unregisterComboKey(ComboKey.ctrl(Input.Keys.S));
 ```
 
-### ComboKey Factories
+### SplitStage Layout
+
+`SplitStage` provides a 9-grid split layout, automatically dividing the screen into 9 regions with customizable split ratio and offsets:
 
 ```java
-ComboKey.ctrl(Keys.S)          // Ctrl+S
-ComboKey.alt(Keys.F4)          // Alt+F4
-ComboKey.shift(Keys.TAB)       // Shift+Tab
-ComboKey.ctrlAlt(Keys.DEL)     // Ctrl+Alt+Delete
-ComboKey.shiftCtrl(Keys.R)     // Shift+Ctrl+R
-ComboKey.shiftAlt(Keys.END)    // Shift+Alt+End
-ComboKey.all(Keys.R)           // Ctrl+Alt+Shift+R
+SplitStage sStage = new SplitStage(viewport, batch);
+
+// Get region tables
+Table center = sStage.getCenter();
+center.add("Center Area");
+
+Table top = sStage.getTop();
+top.add("Top Area");
+
+Table bottomLeft = sStage.getBottomLeft();
+bottomLeft.add("Bottom-Left Corner");
+
+// Set split ratio (default 0.4)
+sStage.setSplit(0.3f);
+
+// Set offsets
+sStage.setOffTop(10);
+sStage.setOffBottom(10);
 ```
 
-### Window Control
+### PriorityGroup Render Order
+
+`PriorityGroup` serves as the root node of `Stage`, controlling render order by priority:
 
 ```java
-// Make window floating
-setFloating(true);
+PriorityGroup group = stage.getPriorityGroup();
 
-// Enable mouse passthrough (clicks pass through to underlying windows)
-setMousePassThrough(true);
+// Lower priority values are drawn first (at the bottom layer)
+group.addActor(backgroundImage, 0);    // Background
+group.addActor(uiPanel, 10);           // UI Panel
+group.addActor(tooltip, 100);          // Tooltip (topmost layer)
+
+// Convenience methods
+stage.addActor(actor, 5);              // Add with specified priority
+stage.addUIActor(actor);               // Add with UI priority (0x40000000)
+```
+
+### Font Utilities
+
+FreeType-based font wrapper with dynamic glyph generation for characters not pre-loaded:
+
+```java
+// Use default font
+Font font = DefaultFont.getFont();
+
+// Custom font file
+Font customFont = Font.createFont("fonts/NotoSansSC.ttf", Files.FileType.Internal, 24);
+
+// Dynamic glyph generation: automatically generates glyphs for characters
+// that are not pre-loaded, suitable for large character sets like Chinese
+
+// Scaling
+font.scale(1.5f);
+font.scaleSize(1.5f);
+
+// Layout measurement
+GlyphLayout layout = font.createGlyphLayout("Hello World");
+float textWidth = layout.width;
+```
+
+### Window Attributes
+
+```java
+// Set window always-on-top
+ScreenManager.instance.setFloating(true);
+
+// Set mouse passthrough (window does not intercept mouse events)
+ScreenManager.instance.setMousePassThrough(true);
+```
+
+### Auto Logger
+
+Implement the `AutoLogger` interface to get convenient logging methods with automatic class name as tag:
+
+```java
+public class MyClass implements AutoLogger {
+    public void doSomething() {
+        log("This is a regular log");
+        debug("This is a debug log");
+        error("This is an error log");
+    }
+}
 ```
 
 ---
 
-## Project Structure
+## Custom Transitions
 
+Extend `ScreenTransition` and implement the `render` method:
+
+```java
+public class ZoomScreenTransition extends ScreenTransition {
+    public ZoomScreenTransition() {
+        super(0.5f, Interpolation.exp5Out);
+    }
+
+    @Override
+    public void render(TextureRegion last, TextureRegion cur, float delta, Batch batch) {
+        super.render(last, cur, delta, batch);
+        // progress: transition progress (0.0 ~ 1.0)
+        // last: texture of the previous screen
+        // cur: texture of the current screen
+    }
+}
 ```
-src/main/java/com/remainder/
-├── screen/
-│   ├── ScreenManager.java       # Screen manager
-│   ├── Screen.java             # Screen base class
-│   └── transition/             # Transition animations
-│       ├── ScreenTransition.java
-│       ├── FadeScreenTransition.java
-│       └── SlideScreenTransition.java
-├── input/
-│   ├── Stage.java              # Extended Stage
-│   ├── SplitStage.java         # Split Stage
-│   ├── HotkeyListener.java     # Hotkey listener
-│   └── ComboKey.java          # Combo key record
-└── util/
-    ├── AutoLogger.java         # Logging interface
-    ├── PriorityGroup.java      # Priority container
-    ├── ReflectUtil.java        # Reflection utility
-    └── font/                  # Font support
-        ├── Font.java
-        └── DefaultFont.java
-```
+
+---
+
+## Module Overview
+
+| Module | Package | Description |
+|--------|---------|-------------|
+| `ScreenManager` | `com.remainder.screen` | Manages screen lifecycle and transitions |
+| `Screen` | `com.remainder.screen` | Base screen class, extend to implement business logic |
+| `ScreenTransition` | `com.remainder.screen.transition` | Abstract base class for transition animations |
+| `FadeScreenTransition` | `com.remainder.screen.transition` | Fade-in/fade-out transition |
+| `SlideScreenTransition` | `com.remainder.screen.transition` | Slide transition (left/right/top/bottom) |
+| `Stage` | `com.remainder.input` | Extended Stage with integrated PriorityGroup and alpha drawing |
+| `SplitStage` | `com.remainder.input` | 9-grid split layout Stage |
+| `HotkeyListener` | `com.remainder.input` | Hotkey listener |
+| `ComboKey` | `com.remainder.input` | Combo-key definition (Java Record) |
+| `PriorityGroup` | `com.remainder.util` | Priority-based rendering Group |
+| `Font` | `com.remainder.util.font` | FreeType font wrapper with dynamic glyph generation |
+| `DefaultFont` | `com.remainder.util.font` | Default font manager |
+| `AutoLogger` | `com.remainder.util` | Auto-logging interface |
+| `ReflectUtil` | `com.remainder.util` | Reflection utility class |
 
 ---
 
 ## Build
 
 ```bash
-# Compile
-./gradlew compileJava
+# Clone the repository
+git clone https://github.com/remainder1356/screen-manager.git
+cd screen-manager
 
-# Test
+# Build the project
+./gradlew build
+
+# Run tests
 ./gradlew test
-
-# Build JAR
-./gradlew jar
 ```
-
----
-
-## Dependencies
-
-| Dependency | Version | Purpose |
-|------------|---------|---------|
-| LibGDX | 1.13.5 | Core framework |
-| libGDX Backend LWJGL3 | 1.13.5 | Desktop support |
-| FreeType | 1.13.5 | Font rendering |
 
 ---
 
 ## License
 
-MIT License
+[MIT License](LICENSE) © 2026 remainder1356
