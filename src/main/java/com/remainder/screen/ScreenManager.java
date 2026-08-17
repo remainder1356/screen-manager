@@ -2,6 +2,7 @@ package com.remainder.screen;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Graphics;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
@@ -15,6 +16,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.remainder.input.HotkeyListener;
+import com.remainder.input.HudStage;
 import com.remainder.screen.transition.FadeScreenTransition;
 import com.remainder.screen.transition.ScreenTransition;
 import com.remainder.util.AutoLogger;
@@ -53,7 +55,7 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
     /**
      * The viewport that defines how the camera maps to screen coordinates.
      */
-    protected Viewport viewport;
+    protected Viewport viewport, hudViewport;
 
     /**
      * Stack containing the history of screens that were previously active.
@@ -156,7 +158,17 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
         currentHeight = Gdx.graphics.getHeight();
         camera = new OrthographicCamera();
         viewport = new ExtendViewport(currentWidth, currentHeight, camera);
+        hudViewport = new ExtendViewport(currentWidth, currentHeight, camera);
 
+        createFBO();
+
+        lasts = new Stack<>();
+        font = DefaultFont.getFont();
+
+        instance = this;
+    }
+
+    private void createFBO() {
         if (lastFBO != null) {
             lastFBO.dispose();
         }
@@ -169,11 +181,6 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
         curFBO = new FrameBuffer(Pixmap.Format.RGBA8888,
                 HdpiUtils.toBackBufferX(currentWidth),
                 HdpiUtils.toBackBufferY(currentHeight), hasDepth);
-
-        lasts = new Stack<>();
-        font = DefaultFont.getFont();
-
-        instance = this;
     }
 
     /**
@@ -213,10 +220,11 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
 
         // initialize stage
         screen.stage = new Stage(viewport);
+        screen.hudStage = new HudStage(hudViewport);
         screen.hotkeyListener = new HotkeyListener();
         screen.stage.addListener(screen.hotkeyListener);
         screen.batch = screen.stage.getBatch();
-        Gdx.input.setInputProcessor(screen.stage);
+        Gdx.input.setInputProcessor(new InputMultiplexer(screen.stage, screen.hudStage));
         screen.show();
         screen.resize(currentWidth, currentHeight);
     }
@@ -322,6 +330,8 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
     public void resize(int width, int height) {
         currentHeight = height;
         currentWidth = width;
+
+        createFBO();
 
         if (curScreen != null) {
             curScreen.resize(width, height);
