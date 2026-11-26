@@ -127,12 +127,6 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
     protected boolean hasDepth;
 
     /**
-     * Internal flag used to indicate that we're transitioning to a previous screen.
-     * This affects how the screen history stack is managed.
-     */
-    private boolean toLast = false;
-
-    /**
      * The window handle, used to set glfw attributes.
      */
     private long window;
@@ -189,10 +183,14 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
      * @param screen The screen to set as the current screen.
      */
     public void setScreen(Screen screen) {
-        setScreen(screen, null);
+        setScreen(screen, null, true);
     }
 
     public void setScreen(Screen screen, ScreenTransition transition) {
+        setScreen(screen, transition, true);
+    }
+
+    public void setScreen(Screen screen, ScreenTransition transition, boolean record) {
         debug("Start setting screen: " + screen.getTag());
 
         if (isTransitioning) {
@@ -202,10 +200,9 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
         nextScreen = screen;
 
         // push history screen
-        if (!toLast && curScreen != null) {
+        if (curScreen != null && !record) {
             lasts.push(curScreen);
         }
-        toLast = false;
         lastScreen = lasts.isEmpty() ? null : lasts.peek();
 
         // transition process
@@ -220,6 +217,15 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
         }
 
         // initialize stage
+        initScreen(screen);
+    }
+
+    /**
+     * Initialize the screen you have given.
+     * In most time, you are not necessary to use this method to initialize a screen.
+     * This method will run in {@link #setScreen(Screen, ScreenTransition, boolean)}.
+     */
+    public void initScreen(Screen screen) {
         screen.stage = new Stage(viewport);
         screen.hudStage = new HudStage(hudViewport);
         screen.hotkeyListener = new HotkeyListener();
@@ -231,7 +237,7 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
     }
 
     public void toLastScreen() {
-        toLastScreen(new FadeScreenTransition());
+        toLastScreen(null);
     }
 
     /**
@@ -242,8 +248,7 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
      */
     public void toLastScreen(ScreenTransition transition) {
         if (hasLastScreen()) {
-            toLast = true;
-            setScreen(Objects.requireNonNull(lasts.pop()), transition);
+            setScreen(Objects.requireNonNull(lasts.pop()), transition, false);
         }else {
             error("The screen is not exists.");
         }
