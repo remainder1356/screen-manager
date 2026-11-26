@@ -211,8 +211,10 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
         // push history screen
         if (this.record && curScreen != null) {
             lasts.push(curScreen);
-            this.record = true;
         }
+
+        // reset record and set last screen
+        this.record = true;
         lastScreen = lasts.isEmpty() ? null : lasts.peek();
 
         // transition process
