@@ -198,10 +198,6 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
     public void setScreen(Screen screen, ScreenTransition transition, boolean record) {
         debug("Start setting screen: " + screen.getTag());
 
-        if (!record) {
-            this.record = false;
-        }
-
         if (isTransitioning) {
             finishTransition();
         }
@@ -226,6 +222,11 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
             debug("Start processing transition.");
         } else {
             nextScreen();
+        }
+
+        // if record is false, nextScreen will not add to lasts
+        if (!record) {
+            this.record = false;
         }
 
         // initialize stage
