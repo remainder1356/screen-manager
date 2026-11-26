@@ -53,8 +53,8 @@ public record ComboKey(int keycode, boolean ctrl, boolean alt, boolean shift) {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof ComboKey(int keycode1, boolean ctrl1, boolean alt1, boolean shift1))) return false;
-        return keycode == keycode1 && alt == alt1 && ctrl == ctrl1 && shift == shift1;
+        if (!(o instanceof ComboKey comboKey)) return false;
+        return keycode == comboKey.keycode && alt == comboKey.alt && ctrl == comboKey.ctrl && shift == comboKey.shift;
     }
 
     @Override

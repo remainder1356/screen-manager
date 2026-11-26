@@ -329,6 +329,10 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
 
     @Override
     public void resize(int width, int height) {
+        if (width < 0 || height < 0) {
+            return;
+        }
+
         currentHeight = height;
         currentWidth = width;
 
