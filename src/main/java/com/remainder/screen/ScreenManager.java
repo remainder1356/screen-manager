@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.HdpiUtils;
@@ -127,6 +126,12 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
     protected boolean hasDepth;
 
     /**
+     * Internal flag used to indicate that we're transitioning to a previous screen.
+     * This affects how the screen history stack is managed.
+     */
+    private boolean record = true;
+
+    /**
      * The window handle, used to set glfw attributes.
      */
     private long window;
@@ -193,6 +198,10 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
     public void setScreen(Screen screen, ScreenTransition transition, boolean record) {
         debug("Start setting screen: " + screen.getTag());
 
+        if (!record) {
+            this.record = false;
+        }
+
         if (isTransitioning) {
             finishTransition();
         }
@@ -200,8 +209,9 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
         nextScreen = screen;
 
         // push history screen
-        if (curScreen != null && !record) {
+        if (this.record && curScreen != null) {
             lasts.push(curScreen);
+            this.record = true;
         }
         lastScreen = lasts.isEmpty() ? null : lasts.peek();
 
