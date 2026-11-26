@@ -188,14 +188,14 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
      * @param screen The screen to set as the current screen.
      */
     public void setScreen(Screen screen) {
-        setScreen(screen, null, true);
+        setScreen(screen, null, true, true);
     }
 
     public void setScreen(Screen screen, ScreenTransition transition) {
-        setScreen(screen, transition, true);
+        setScreen(screen, transition, true, true);
     }
 
-    public void setScreen(Screen screen, ScreenTransition transition, boolean record) {
+    public void setScreen(Screen screen, ScreenTransition transition, boolean recordNext, boolean recordCurrent) {
         debug("Start setting screen: " + screen.getTag());
 
         if (isTransitioning) {
@@ -205,7 +205,7 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
         nextScreen = screen;
 
         // push history screen
-        if (this.record && curScreen != null) {
+        if (this.record && recordCurrent && curScreen != null) {
             lasts.push(curScreen);
         }
 
@@ -225,7 +225,7 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
         }
 
         // if record is false, nextScreen will not add to lasts
-        if (!record) {
+        if (!recordNext) {
             this.record = false;
         }
 
@@ -236,7 +236,7 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
     /**
      * Initialize the screen you have given.
      * In most time, you are not necessary to use this method to initialize a screen.
-     * This method will run in {@link #setScreen(Screen, ScreenTransition, boolean)}.
+     * This method will run in {@link #setScreen(Screen, ScreenTransition, boolean, boolean)}.
      */
     public void initScreen(Screen screen) {
         screen.stage = new Stage(viewport);
@@ -261,7 +261,7 @@ public abstract class ScreenManager implements ApplicationListener, AutoLogger {
      */
     public void toLastScreen(ScreenTransition transition) {
         if (hasLastScreen()) {
-            setScreen(Objects.requireNonNull(lasts.pop()), transition, false);
+            setScreen(Objects.requireNonNull(lasts.pop()), transition, false, true);
         }else {
             error("The screen is not exists.");
         }
